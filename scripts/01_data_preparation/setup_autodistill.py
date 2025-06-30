@@ -16,6 +16,9 @@ import shutil
 from pathlib import Path
 import importlib.util
 
+# Add the parent directory of 'scripts' to the Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,

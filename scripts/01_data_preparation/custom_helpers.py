@@ -13,6 +13,9 @@ from pathlib import Path
 
 import torch
 
+# Add the parent directory of 'scripts' to the Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 if not torch.cuda.is_available():

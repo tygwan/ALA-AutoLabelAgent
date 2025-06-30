@@ -5,14 +5,17 @@
 마스크/박스 좌표 정보를 확인하고 시각화하는 스크립트입니다.
 """
 
+import sys
 import os
 import argparse
 import json
 import cv2
 import numpy as np
 from pathlib import Path
-import sys
 import logging
+
+# Add the parent directory of 'scripts' to the Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 # 로깅 설정
 logging.basicConfig(

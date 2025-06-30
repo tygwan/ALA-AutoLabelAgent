@@ -5,6 +5,12 @@
 마스크 데이터를 다양한 형식으로 변환하고 저장하는 함수들을 제공합니다.
 """
 
+import sys
+import os
+
+# Add the parent directory of 'scripts' to the Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
 import numpy as np
 import cv2
 import os

@@ -26,8 +26,8 @@ Models supported:
 - ResNet-50
 """
 
-import os
 import sys
+import os
 import argparse
 import json
 import numpy as np
@@ -41,8 +41,10 @@ import cv2
 import matplotlib.pyplot as plt
 from typing import Dict, List, Tuple, Optional, Union, Any
 
+# Add the parent directory of 'scripts' to the Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
 # Import project utilities
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from scripts.data_utils import get_category_path, load_class_mapping
 
 # Configure logging

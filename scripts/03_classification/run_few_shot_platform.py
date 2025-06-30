@@ -19,6 +19,23 @@ Few-Shot Learning Experiment & Evaluation Platform 실행 스크립트
 
 import os
 import sys
+
+# --- Modified Packages Path Injection ---
+# This ensures that the versions of packages in the 'modified_packages'
+# directory are used instead of the system-installed ones.
+# This must be at the very top, before any other project imports.
+try:
+    # Get the absolute path to the project's root directory
+    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+    # Construct the path to the modified packages directory
+    modified_packages_path = os.path.join(project_root, 'modified_packages')
+    # Prepend it to the system path
+    sys.path.insert(0, modified_packages_path)
+    print(f"[INFO] Injected modified packages path: {modified_packages_path}")
+except Exception as e:
+    print(f"[ERROR] Could not set up modified packages path: {e}")
+# --- End of Path Injection ---
+
 import argparse
 import traceback
 import glob

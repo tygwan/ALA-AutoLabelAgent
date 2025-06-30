@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
+import sys
+import os
 import numpy as np
 import json
-import os
 import argparse
 from pathlib import Path
 import cv2
+
+# Add the parent directory of 'scripts' to the Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 def mask_to_coords(mask, min_area=10):
     """마스크에서 좌표 정보 추출

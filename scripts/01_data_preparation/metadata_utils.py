@@ -5,12 +5,16 @@
 이 모듈은 전처리 및 분류 결과의 메타데이터를 관리하는 유틸리티 함수를 제공합니다.
 """
 
+import sys
 import os
 import json
 import datetime
 from pathlib import Path
 import shutil
 from typing import Dict, List, Optional, Union, Tuple, Any
+
+# Add the parent directory of 'scripts' to the Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 def load_metadata_file(metadata_file: str) -> Dict[str, Any]:
     """

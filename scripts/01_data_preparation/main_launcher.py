@@ -9,6 +9,25 @@ import traceback
 from pathlib import Path
 from tqdm import tqdm  # 프로그레스 바를 위한 tqdm 추가
 
+# Add the parent directory of 'scripts' to the Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
+# --- Modified Packages Path Injection ---
+# This ensures that the versions of packages in the 'modified_packages'
+# directory are used instead of the system-installed ones.
+# This must be at the very top, before any other project imports.
+try:
+    # Get the absolute path to the project's root directory
+    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+    # Construct the path to the modified packages directory
+    modified_packages_path = os.path.join(project_root, 'modified_packages')
+    # Prepend it to the system path
+    sys.path.insert(0, modified_packages_path)
+    print(f"[INFO] Injected modified packages path: {modified_packages_path}")
+except Exception as e:
+    print(f"[ERROR] Could not set up modified packages path: {e}")
+# --- End of Path Injection ---
+
 # 메모리 모니터링 기능 추가
 try:
     import psutil

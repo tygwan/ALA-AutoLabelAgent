@@ -34,8 +34,10 @@ import cv2
 import matplotlib.pyplot as plt
 from PIL import Image
 
+# Add the parent directory of 'scripts' to the Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
 # Import project utilities
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from scripts.data_utils import get_category_path, load_class_mapping
 
 # Configure logging

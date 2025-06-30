@@ -40,7 +40,7 @@ from autodistill_yolov8 import YOLOv8
 
 # Import project utilities
 import sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from scripts.data_utils import (
     get_images_path,
     get_dataset_path,

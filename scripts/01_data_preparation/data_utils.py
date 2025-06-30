@@ -4,6 +4,7 @@
 이 모듈은 카테고리 기반 폴더 구조의 생성 및 관리를 지원합니다.
 """
 
+import sys
 import os
 import json
 import shutil
@@ -13,6 +14,9 @@ import cv2
 import numpy as np
 from pathlib import Path
 from typing import List, Dict, Optional, Union, Tuple
+
+# Add the parent directory of 'scripts' to the Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 # 로깅 설정
 logging.basicConfig(

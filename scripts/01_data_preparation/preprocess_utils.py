@@ -5,12 +5,16 @@
 이미지 전처리를 위한 다양한 함수들을 제공합니다.
 """
 
+import sys
 import os
 import cv2
 import json
 import numpy as np
 import datetime
 from pathlib import Path
+
+# Add the parent directory of 'scripts' to the Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 def load_coords_data(coords_file):
     """
