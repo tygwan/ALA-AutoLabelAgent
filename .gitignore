@@ -9,6 +9,8 @@ roo.modes
 .windsurfrules
 taskmaster-mcp.json
 mcp.db
+mcp/
+.roomodes
 
 # Data directories - exclude by default, but keep structure
 data/*

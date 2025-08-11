@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Processing Dashboard</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <h1>AI Image Processing Dashboard</h1>
+        <nav>
+            <ul>
+                <li><a href="#support-set">Support Set</a></li>
+                <li><a href="#refined-dataset">Refined Dataset</a></li>
+                <li><a href="#analytics">Analytics</a></li>
+                <li><a href="#settings">Settings</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <section id="categories">
+            <h2>Categories</h2>
+            <div class="category-list">
+            {% for category in categories %}
+                <div class="category-card" data-category="{{ category }}">
+                    <h3>{{ category }}</h3>
+                    <button onclick="loadCategory('{{ category }}')">Load</button>
+                </div>
+            {% endfor %}
+            </div>
+        </section>
+
+        <section id="support-set">
+            <h2>Support Set</h2>
+            <div class="gallery" id="support-set-gallery">
+                <!-- Support set images will be loaded here -->
+            </div>
+        </section>
+
+        <section id="refined-dataset">
+            <h2>Refined Dataset</h2>
+            <div class="controls">
+                <select id="classification-method">
+                    <option value="method1">Method 1</option>
+                    <option value="method2">Method 2</option>
+                    <option value="method3">Method 3</option>
+                    <option value="method4">Method 4</option>
+                </select>
+                <button onclick="applyClassification()">Apply Classification</button>
+            </div>
+            <div class="gallery" id="refined-dataset-gallery">
+                <!-- Refined dataset images will be loaded here -->
+            </div>
+        </section>
+
+        <section id="analytics">
+            <h2>Analytics</h2>
+            <div class="chart-container">
+                <canvas id="class-distribution-chart"></canvas>
+            </div>
+            <div class="stats-container">
+                <!-- Statistics will be loaded here -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>AI Image Processing Dashboard - Project AGI</p>
+    </footer>
+
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>

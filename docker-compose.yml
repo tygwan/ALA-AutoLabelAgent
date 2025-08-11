@@ -1,0 +1,81 @@
+version: '3'
+
+services:
+  project-agi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: project-agi
+    volumes:
+      - .:/app  # 호스트의 현재 디렉토리를 컨테이너의 /app에 마운트
+      - ./data:/app/data  # 데이터 디렉토리 마운트
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
+
+  mcp-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mcp-api
+    volumes:
+      - .:/app  # 호스트의 현재 디렉토리를 컨테이너의 /app에 마운트
+      - ./mcp/config:/app/mcp/config  # 중요: 설정 디렉토리가 유지되도록 명시적으로 마운트
+    ports:
+      - "8000:8000"  # API 서버 포트 매핑
+    command: python /app/scripts/start_api.py
+    depends_on:
+      - project-agi
+    restart: unless-stopped
+    environment:
+      - PYTHONPATH=/app
+
+  cloudflare-tunnel:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cloudflare-tunnel
+    volumes:
+      - .:/app  # 호스트의 현재 디렉토리를 컨테이너의 /app에 마운트
+      - ./mcp/config:/app/mcp/config  # 중요: 설정 디렉토리가 유지되도록 명시적으로 마운트
+    command: python /app/scripts/cloudflare_tunnel_tracker.py
+    depends_on:
+      - mcp-api
+    restart: unless-stopped
+    environment:
+      - PYTHONPATH=/app
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n-integration
+    volumes:
+      - ./n8n-data:/home/node/.n8n  # n8n 데이터 저장 디렉토리
+    ports:
+      - "5678:5678"  # n8n 웹 인터페이스 포트
+    environment:
+      - N8N_HOST=0.0.0.0
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - GENERIC_TIMEZONE=Asia/Seoul
+      - WEBHOOK_URL=${CLOUDFLARE_TUNNEL_URL:-https://example.trycloudflare.com}  # Cloudflare 터널 URL
+    depends_on:
+      - mcp-api
+      - cloudflare-tunnel
+    restart: unless-stopped
+    entrypoint: >
+      /bin/sh -c '
+      echo "Waiting for MCP API and tunnel to start...";
+      sleep 15;
+      TUNNEL_URL=$$(curl -s http://mcp-api:8000/tunnel-url | grep -o "https://[^\"]*" || echo "https://example.trycloudflare.com");
+      echo "Using webhook URL: $$TUNNEL_URL";
+      export WEBHOOK_URL=$$TUNNEL_URL;
+      echo "Starting n8n...";
+      n8n start;
+      ' 
