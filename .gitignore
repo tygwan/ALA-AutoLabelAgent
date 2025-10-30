@@ -88,6 +88,7 @@ node_modules/
 # Task files
 tasks.json
 tasks/
+claude-task-master/
 .cursor/
 .roo/
 runs/
