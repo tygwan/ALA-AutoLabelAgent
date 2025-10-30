@@ -103,3 +103,5 @@ test_category/images/*
 !test_category/images/.gitkeep
 test_category/support-set/*
 !test_category/support-set/.gitkeep 
+# Config (examples only committed)
+config/*.json
