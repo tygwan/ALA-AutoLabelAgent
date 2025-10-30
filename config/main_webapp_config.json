@@ -1,0 +1,26 @@
+{
+  "data_path": "/home/ml/project-agi/data",
+  "save_mask_png": false,
+  "target_size": [
+    640,
+    640
+  ],
+  "resize_dataset": true,
+  "confidence_threshold": 0.5,
+  "val_split": 0.2,
+  "models": {
+    "detection": "grounding-dino-2",
+    "segmentation": "sam-2",
+    "few_shot": {
+      "CLIP": {
+        "enabled": true
+      },
+      "DINOv2": {
+        "enabled": true
+      },
+      "Florence-2": {
+        "enabled": true
+      }
+    }
+  }
+}

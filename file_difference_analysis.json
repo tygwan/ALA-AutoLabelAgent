@@ -1,0 +1,7 @@
+{
+  "autodistill_total": 16061,
+  "few_shot_total": 16061,
+  "common_files": 16061,
+  "files_to_remove": [],
+  "files_missing_in_few_shot": []
+}

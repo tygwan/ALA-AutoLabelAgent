@@ -1,0 +1,209 @@
+Shot,Threshold,Class,True class,Within target classes,Manually marked as others,Total
+1,0.3,Class_0,Fence (C1),666,421,1087
+1,0.3,Class_1,Sidewalk (C2),3425,2044,5469
+1,0.3,Class_2,Parked car (C3),4177,1278,5455
+1,0.3,Class_3,Traffic cone (C4),3219,831,4050
+1,0.35,Class_0,Fence (C1),484,603,1087
+1,0.35,Class_1,Sidewalk (C2),2546,2923,5469
+1,0.35,Class_2,Parked car (C3),3472,1983,5455
+1,0.35,Class_3,Traffic cone (C4),2360,1690,4050
+1,0.4,Class_0,Fence (C1),373,714,1087
+1,0.4,Class_1,Sidewalk (C2),2139,3330,5469
+1,0.4,Class_2,Parked car (C3),2993,2462,5455
+1,0.4,Class_3,Traffic cone (C4),1597,2453,4050
+1,0.45,Class_0,Fence (C1),306,781,1087
+1,0.45,Class_1,Sidewalk (C2),1875,3594,5469
+1,0.45,Class_2,Parked car (C3),2580,2875,5455
+1,0.45,Class_3,Traffic cone (C4),1110,2940,4050
+1,0.5,Class_0,Fence (C1),233,854,1087
+1,0.5,Class_1,Sidewalk (C2),1623,3846,5469
+1,0.5,Class_2,Parked car (C3),2176,3279,5455
+1,0.5,Class_3,Traffic cone (C4),800,3250,4050
+1,0.55,Class_0,Fence (C1),147,940,1087
+1,0.55,Class_1,Sidewalk (C2),1416,4053,5469
+1,0.55,Class_2,Parked car (C3),1784,3671,5455
+1,0.55,Class_3,Traffic cone (C4),583,3467,4050
+1,0.6,Class_0,Fence (C1),82,1005,1087
+1,0.6,Class_1,Sidewalk (C2),1182,4287,5469
+1,0.6,Class_2,Parked car (C3),1357,4098,5455
+1,0.6,Class_3,Traffic cone (C4),358,3692,4050
+1,0.65,Class_0,Fence (C1),31,1056,1087
+1,0.65,Class_1,Sidewalk (C2),924,4545,5469
+1,0.65,Class_2,Parked car (C3),935,4520,5455
+1,0.65,Class_3,Traffic cone (C4),234,3816,4050
+1,0.7,Class_0,Fence (C1),11,1076,1087
+1,0.7,Class_1,Sidewalk (C2),597,4872,5469
+1,0.7,Class_2,Parked car (C3),534,4921,5455
+1,0.7,Class_3,Traffic cone (C4),163,3887,4050
+1,0.75,Class_0,Fence (C1),3,1084,1087
+1,0.75,Class_1,Sidewalk (C2),312,5157,5469
+1,0.75,Class_2,Parked car (C3),177,5278,5455
+1,0.75,Class_3,Traffic cone (C4),98,3952,4050
+1,0.8,Class_0,Fence (C1),1,1086,1087
+1,0.8,Class_1,Sidewalk (C2),123,5346,5469
+1,0.8,Class_2,Parked car (C3),47,5408,5455
+1,0.8,Class_3,Traffic cone (C4),45,4005,4050
+1,0.85,Class_0,Fence (C1),1,1086,1087
+1,0.85,Class_1,Sidewalk (C2),26,5443,5469
+1,0.85,Class_2,Parked car (C3),10,5445,5455
+1,0.85,Class_3,Traffic cone (C4),18,4032,4050
+1,0.9,Class_0,Fence (C1),1,1086,1087
+1,0.9,Class_1,Sidewalk (C2),1,5468,5469
+1,0.9,Class_2,Parked car (C3),2,5453,5455
+1,0.9,Class_3,Traffic cone (C4),4,4046,4050
+10,0.3,Class_0,Fence (C1),851,236,1087
+10,0.3,Class_1,Sidewalk (C2),5134,335,5469
+10,0.3,Class_2,Parked car (C3),4620,835,5455
+10,0.3,Class_3,Traffic cone (C4),3331,719,4050
+10,0.35,Class_0,Fence (C1),743,344,1087
+10,0.35,Class_1,Sidewalk (C2),4670,799,5469
+10,0.35,Class_2,Parked car (C3),4005,1450,5455
+10,0.35,Class_3,Traffic cone (C4),2640,1410,4050
+10,0.4,Class_0,Fence (C1),641,446,1087
+10,0.4,Class_1,Sidewalk (C2),4027,1442,5469
+10,0.4,Class_2,Parked car (C3),3459,1996,5455
+10,0.4,Class_3,Traffic cone (C4),1945,2105,4050
+10,0.45,Class_0,Fence (C1),556,531,1087
+10,0.45,Class_1,Sidewalk (C2),3103,2366,5469
+10,0.45,Class_2,Parked car (C3),2847,2608,5455
+10,0.45,Class_3,Traffic cone (C4),1408,2642,4050
+10,0.5,Class_0,Fence (C1),403,684,1087
+10,0.5,Class_1,Sidewalk (C2),2292,3177,5469
+10,0.5,Class_2,Parked car (C3),2116,3339,5455
+10,0.5,Class_3,Traffic cone (C4),1049,3001,4050
+10,0.55,Class_0,Fence (C1),274,813,1087
+10,0.55,Class_1,Sidewalk (C2),1764,3705,5469
+10,0.55,Class_2,Parked car (C3),1274,4181,5455
+10,0.55,Class_3,Traffic cone (C4),736,3314,4050
+10,0.6,Class_0,Fence (C1),145,942,1087
+10,0.6,Class_1,Sidewalk (C2),1236,4233,5469
+10,0.6,Class_2,Parked car (C3),417,5038,5455
+10,0.6,Class_3,Traffic cone (C4),401,3649,4050
+10,0.65,Class_0,Fence (C1),49,1038,1087
+10,0.65,Class_1,Sidewalk (C2),658,4811,5469
+10,0.65,Class_2,Parked car (C3),20,5435,5455
+10,0.65,Class_3,Traffic cone (C4),128,3922,4050
+10,0.7,Class_0,Fence (C1),4,1083,1087
+10,0.7,Class_1,Sidewalk (C2),114,5355,5469
+10,0.7,Class_2,Parked car (C3),0,5455,5455
+10,0.7,Class_3,Traffic cone (C4),17,4033,4050
+10,0.75,Class_0,Fence (C1),0,1087,1087
+10,0.75,Class_1,Sidewalk (C2),0,5469,5469
+10,0.75,Class_2,Parked car (C3),0,5455,5455
+10,0.75,Class_3,Traffic cone (C4),0,4050,4050
+10,0.8,Class_0,Fence (C1),0,1087,1087
+10,0.8,Class_1,Sidewalk (C2),0,5469,5469
+10,0.8,Class_2,Parked car (C3),0,5455,5455
+10,0.8,Class_3,Traffic cone (C4),0,4050,4050
+10,0.85,Class_0,Fence (C1),0,1087,1087
+10,0.85,Class_1,Sidewalk (C2),0,5469,5469
+10,0.85,Class_2,Parked car (C3),0,5455,5455
+10,0.85,Class_3,Traffic cone (C4),0,4050,4050
+10,0.9,Class_0,Fence (C1),0,1087,1087
+10,0.9,Class_1,Sidewalk (C2),0,5469,5469
+10,0.9,Class_2,Parked car (C3),0,5455,5455
+10,0.9,Class_3,Traffic cone (C4),0,4050,4050
+30,0.3,Class_0,Fence (C1),848,239,1087
+30,0.3,Class_1,Sidewalk (C2),5168,301,5469
+30,0.3,Class_2,Parked car (C3),4692,763,5455
+30,0.3,Class_3,Traffic cone (C4),3342,708,4050
+30,0.35,Class_0,Fence (C1),748,339,1087
+30,0.35,Class_1,Sidewalk (C2),4749,720,5469
+30,0.35,Class_2,Parked car (C3),4124,1331,5455
+30,0.35,Class_3,Traffic cone (C4),2641,1409,4050
+30,0.4,Class_0,Fence (C1),645,442,1087
+30,0.4,Class_1,Sidewalk (C2),4186,1283,5469
+30,0.4,Class_2,Parked car (C3),3536,1919,5455
+30,0.4,Class_3,Traffic cone (C4),1924,2126,4050
+30,0.45,Class_0,Fence (C1),552,535,1087
+30,0.45,Class_1,Sidewalk (C2),3406,2063,5469
+30,0.45,Class_2,Parked car (C3),2974,2481,5455
+30,0.45,Class_3,Traffic cone (C4),1426,2624,4050
+30,0.5,Class_0,Fence (C1),403,684,1087
+30,0.5,Class_1,Sidewalk (C2),2444,3025,5469
+30,0.5,Class_2,Parked car (C3),2206,3249,5455
+30,0.5,Class_3,Traffic cone (C4),1067,2983,4050
+30,0.55,Class_0,Fence (C1),228,859,1087
+30,0.55,Class_1,Sidewalk (C2),1621,3848,5469
+30,0.55,Class_2,Parked car (C3),1364,4091,5455
+30,0.55,Class_3,Traffic cone (C4),768,3282,4050
+30,0.6,Class_0,Fence (C1),94,993,1087
+30,0.6,Class_1,Sidewalk (C2),944,4525,5469
+30,0.6,Class_2,Parked car (C3),532,4923,5455
+30,0.6,Class_3,Traffic cone (C4),425,3625,4050
+30,0.65,Class_0,Fence (C1),21,1066,1087
+30,0.65,Class_1,Sidewalk (C2),267,5202,5469
+30,0.65,Class_2,Parked car (C3),52,5403,5455
+30,0.65,Class_3,Traffic cone (C4),111,3939,4050
+30,0.7,Class_0,Fence (C1),0,1087,1087
+30,0.7,Class_1,Sidewalk (C2),1,5468,5469
+30,0.7,Class_2,Parked car (C3),0,5455,5455
+30,0.7,Class_3,Traffic cone (C4),3,4047,4050
+30,0.75,Class_0,Fence (C1),0,1087,1087
+30,0.75,Class_1,Sidewalk (C2),0,5469,5469
+30,0.75,Class_2,Parked car (C3),0,5455,5455
+30,0.75,Class_3,Traffic cone (C4),0,4050,4050
+30,0.8,Class_0,Fence (C1),0,1087,1087
+30,0.8,Class_1,Sidewalk (C2),0,5469,5469
+30,0.8,Class_2,Parked car (C3),0,5455,5455
+30,0.8,Class_3,Traffic cone (C4),0,4050,4050
+30,0.85,Class_0,Fence (C1),0,1087,1087
+30,0.85,Class_1,Sidewalk (C2),0,5469,5469
+30,0.85,Class_2,Parked car (C3),0,5455,5455
+30,0.85,Class_3,Traffic cone (C4),0,4050,4050
+30,0.9,Class_0,Fence (C1),0,1087,1087
+30,0.9,Class_1,Sidewalk (C2),0,5469,5469
+30,0.9,Class_2,Parked car (C3),0,5455,5455
+30,0.9,Class_3,Traffic cone (C4),0,4050,4050
+5,0.3,Class_0,Fence (C1),817,270,1087
+5,0.3,Class_1,Sidewalk (C2),4962,507,5469
+5,0.3,Class_2,Parked car (C3),4358,1097,5455
+5,0.3,Class_3,Traffic cone (C4),3058,992,4050
+5,0.35,Class_0,Fence (C1),688,399,1087
+5,0.35,Class_1,Sidewalk (C2),4401,1068,5469
+5,0.35,Class_2,Parked car (C3),3629,1826,5455
+5,0.35,Class_3,Traffic cone (C4),2259,1791,4050
+5,0.4,Class_0,Fence (C1),580,507,1087
+5,0.4,Class_1,Sidewalk (C2),3695,1774,5469
+5,0.4,Class_2,Parked car (C3),2832,2623,5455
+5,0.4,Class_3,Traffic cone (C4),1635,2415,4050
+5,0.45,Class_0,Fence (C1),451,636,1087
+5,0.45,Class_1,Sidewalk (C2),2760,2709,5469
+5,0.45,Class_2,Parked car (C3),1778,3677,5455
+5,0.45,Class_3,Traffic cone (C4),1223,2827,4050
+5,0.5,Class_0,Fence (C1),296,791,1087
+5,0.5,Class_1,Sidewalk (C2),1896,3573,5469
+5,0.5,Class_2,Parked car (C3),643,4812,5455
+5,0.5,Class_3,Traffic cone (C4),924,3126,4050
+5,0.55,Class_0,Fence (C1),153,934,1087
+5,0.55,Class_1,Sidewalk (C2),1109,4360,5469
+5,0.55,Class_2,Parked car (C3),77,5378,5455
+5,0.55,Class_3,Traffic cone (C4),674,3376,4050
+5,0.6,Class_0,Fence (C1),43,1044,1087
+5,0.6,Class_1,Sidewalk (C2),457,5012,5469
+5,0.6,Class_2,Parked car (C3),36,5419,5455
+5,0.6,Class_3,Traffic cone (C4),467,3583,4050
+5,0.65,Class_0,Fence (C1),8,1079,1087
+5,0.65,Class_1,Sidewalk (C2),26,5443,5469
+5,0.65,Class_2,Parked car (C3),20,5435,5455
+5,0.65,Class_3,Traffic cone (C4),281,3769,4050
+5,0.7,Class_0,Fence (C1),2,1085,1087
+5,0.7,Class_1,Sidewalk (C2),0,5469,5469
+5,0.7,Class_2,Parked car (C3),4,5451,5455
+5,0.7,Class_3,Traffic cone (C4),128,3922,4050
+5,0.75,Class_0,Fence (C1),0,1087,1087
+5,0.75,Class_1,Sidewalk (C2),0,5469,5469
+5,0.75,Class_2,Parked car (C3),0,5455,5455
+5,0.75,Class_3,Traffic cone (C4),32,4018,4050
+5,0.8,Class_0,Fence (C1),0,1087,1087
+5,0.8,Class_1,Sidewalk (C2),0,5469,5469
+5,0.8,Class_2,Parked car (C3),0,5455,5455
+5,0.8,Class_3,Traffic cone (C4),1,4049,4050
+5,0.85,Class_0,Fence (C1),0,1087,1087
+5,0.85,Class_1,Sidewalk (C2),0,5469,5469
+5,0.85,Class_2,Parked car (C3),0,5455,5455
+5,0.85,Class_3,Traffic cone (C4),0,4050,4050
+5,0.9,Class_0,Fence (C1),0,1087,1087
+5,0.9,Class_1,Sidewalk (C2),0,5469,5469
+5,0.9,Class_2,Parked car (C3),0,5455,5455
+5,0.9,Class_3,Traffic cone (C4),0,4050,4050
