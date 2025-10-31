@@ -105,3 +105,13 @@ test_category/support-set/*
 !test_category/support-set/.gitkeep 
 # Config (examples only committed)
 config/*.json
+
+# Analysis outputs (not tracked)
+final_table*.csv
+fsl_vs_groundtruth_*.csv
+file_difference_analysis.json
+table7_raw_*.csv
+table8_raw_*.csv
+FSL_predict_results_example.png
+material/test_category/test_image_[2-9].jpg
+material/test_category/test_image_?.jpg
