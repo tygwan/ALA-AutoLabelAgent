@@ -113,5 +113,10 @@ file_difference_analysis.json
 table7_raw_*.csv
 table8_raw_*.csv
 FSL_predict_results_example.png
-material/test_category/test_image_[2-9].jpg
-material/test_category/test_image_?.jpg
+ALA/material/test_category/test_image_[2-9].jpg
+ALA/material/test_category/test_image_?.jpg
+
+# Data directories inside ALA (structure only)
+ALA/data/*
+!ALA/data/.gitkeep
+!ALA/data/README.md
