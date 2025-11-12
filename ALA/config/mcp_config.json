@@ -1,8 +1,0 @@
-{
-  "port": 5678,
-  "webhook_url": "https://localhost:5678",
-  "cloudflare": {
-    "enabled": false,
-    "tunnel_command": "cloudflared tunnel --url http://localhost:5678"
-  }
-}
