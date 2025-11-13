@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Optional
 
 from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtGui import QIcon, QPixmap
+from PyQt6.QtGui import QDragEnterEvent, QDropEvent, QIcon, QPixmap
 from PyQt6.QtWidgets import QAbstractItemView, QListWidget, QListWidgetItem, QWidget
 
 
@@ -61,6 +61,9 @@ class FileListWidget(QListWidget):
 
         # Set movement to static (items don't move)
         self.setMovement(QListWidget.Movement.Static)
+
+        # Enable drag-and-drop for importing images
+        self.setAcceptDrops(True)
 
     def add_image(self, image_path: str) -> bool:
         """
@@ -141,3 +144,40 @@ class FileListWidget(QListWidget):
         # Retrieve full path from item data
         path = current_item.data(Qt.ItemDataRole.UserRole)
         return path
+
+    def dragEnterEvent(self, event: QDragEnterEvent) -> None:
+        """
+        Handle drag enter events to accept file drops.
+
+        Args:
+            event: The drag enter event
+        """
+        # Accept event if it contains URLs (file paths)
+        if event.mimeData().hasUrls():
+            event.acceptProposedAction()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event: QDropEvent) -> None:
+        """
+        Handle drop events to add dropped image files.
+
+        Args:
+            event: The drop event
+        """
+        # Get URLs from mime data
+        mime_data = event.mimeData()
+        if not mime_data.hasUrls():
+            event.ignore()
+            return
+
+        # Process each dropped file
+        for url in mime_data.urls():
+            # Convert URL to local file path
+            file_path = url.toLocalFile()
+            if file_path:
+                # Try to add the image (will validate if it's a valid image)
+                self.add_image(file_path)
+
+        # Accept the drop event
+        event.acceptProposedAction()

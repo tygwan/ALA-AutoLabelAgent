@@ -333,3 +333,152 @@ class TestFileListWidgetSelection:
         # Selection should be cleared or moved
         # (behavior depends on Qt implementation)
         assert file_list_widget.count() == 1
+
+
+class TestFileListWidgetDragDrop:
+    """Tests for drag-and-drop functionality."""
+
+    def test_widget_accepts_drops(self, file_list_widget):
+        """Test that widget has drag-and-drop enabled."""
+        assert file_list_widget.acceptDrops() is True
+
+    def test_drop_single_image_file(self, file_list_widget, test_image, qtbot):
+        """Test dropping a single image file."""
+        from PyQt6.QtCore import QMimeData, QPoint, Qt, QUrl
+        from PyQt6.QtGui import QDragEnterEvent, QDropEvent
+
+        initial_count = file_list_widget.count()
+
+        # Create mime data with file URL
+        mime_data = QMimeData()
+        mime_data.setUrls([QUrl.fromLocalFile(str(test_image))])
+
+        # Simulate drag enter event
+        drag_enter = QDragEnterEvent(
+            QPoint(10, 10),
+            Qt.DropAction.CopyAction,
+            mime_data,
+            Qt.MouseButton.LeftButton,
+            Qt.KeyboardModifier.NoModifier,
+        )
+        file_list_widget.dragEnterEvent(drag_enter)
+
+        # Event should be accepted
+        assert drag_enter.isAccepted()
+
+        # Simulate drop event
+        drop_event = QDropEvent(
+            QPoint(10, 10),
+            Qt.DropAction.CopyAction,
+            mime_data,
+            Qt.MouseButton.LeftButton,
+            Qt.KeyboardModifier.NoModifier,
+        )
+        file_list_widget.dropEvent(drop_event)
+
+        # Image should be added
+        assert file_list_widget.count() == initial_count + 1
+        assert file_list_widget.item(0).text() == "test_image.png"
+
+    def test_drop_multiple_image_files(self, file_list_widget, tmp_path, qtbot):
+        """Test dropping multiple image files at once."""
+        from PyQt6.QtCore import QMimeData, QPoint, Qt, QUrl
+        from PyQt6.QtGui import QColor, QDropEvent, QImage
+
+        # Create multiple test images
+        image_paths = []
+        for i in range(3):
+            img = QImage(100, 100, QImage.Format.Format_RGB32)
+            img.fill(QColor(i * 50, i * 50, 255))
+            path = tmp_path / f"drop_image_{i}.png"
+            img.save(str(path))
+            image_paths.append(path)
+
+        initial_count = file_list_widget.count()
+
+        # Create mime data with multiple file URLs
+        mime_data = QMimeData()
+        urls = [QUrl.fromLocalFile(str(p)) for p in image_paths]
+        mime_data.setUrls(urls)
+
+        # Simulate drop event
+        drop_event = QDropEvent(
+            QPoint(10, 10),
+            Qt.DropAction.CopyAction,
+            mime_data,
+            Qt.MouseButton.LeftButton,
+            Qt.KeyboardModifier.NoModifier,
+        )
+        file_list_widget.dropEvent(drop_event)
+
+        # All images should be added
+        assert file_list_widget.count() == initial_count + 3
+        for i in range(3):
+            assert file_list_widget.item(i).text() == f"drop_image_{i}.png"
+
+    def test_drop_non_image_file_ignored(self, file_list_widget, tmp_path):
+        """Test that dropping non-image files is handled gracefully."""
+        from PyQt6.QtCore import QMimeData, QPoint, Qt, QUrl
+        from PyQt6.QtGui import QDropEvent
+
+        # Create a non-image file
+        text_file = tmp_path / "not_an_image.txt"
+        text_file.write_text("This is not an image")
+
+        initial_count = file_list_widget.count()
+
+        # Create mime data with text file URL
+        mime_data = QMimeData()
+        mime_data.setUrls([QUrl.fromLocalFile(str(text_file))])
+
+        # Simulate drop event
+        drop_event = QDropEvent(
+            QPoint(10, 10),
+            Qt.DropAction.CopyAction,
+            mime_data,
+            Qt.MouseButton.LeftButton,
+            Qt.KeyboardModifier.NoModifier,
+        )
+        file_list_widget.dropEvent(drop_event)
+
+        # Invalid file should not be added
+        assert file_list_widget.count() == initial_count
+
+    def test_drop_mixed_valid_invalid_files(self, file_list_widget, tmp_path):
+        """Test dropping a mix of valid and invalid files."""
+        from PyQt6.QtCore import QMimeData, QPoint, Qt, QUrl
+        from PyQt6.QtGui import QColor, QDropEvent, QImage
+
+        # Create one valid image
+        img = QImage(100, 100, QImage.Format.Format_RGB32)
+        img.fill(QColor(100, 150, 200))
+        image_path = tmp_path / "valid_image.png"
+        img.save(str(image_path))
+
+        # Create one invalid file
+        text_file = tmp_path / "invalid.txt"
+        text_file.write_text("Not an image")
+
+        initial_count = file_list_widget.count()
+
+        # Create mime data with both files
+        mime_data = QMimeData()
+        urls = [
+            QUrl.fromLocalFile(str(image_path)),
+            QUrl.fromLocalFile(str(text_file)),
+        ]
+        mime_data.setUrls(urls)
+
+        # Simulate drop event
+        drop_event = QDropEvent(
+            QPoint(10, 10),
+            Qt.DropAction.CopyAction,
+            mime_data,
+            Qt.MouseButton.LeftButton,
+            Qt.KeyboardModifier.NoModifier,
+        )
+        file_list_widget.dropEvent(drop_event)
+
+        # Only valid image should be added
+        assert file_list_widget.count() == initial_count + 1
+        assert file_list_widget.item(0).text() == "valid_image.png"
