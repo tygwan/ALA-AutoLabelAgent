@@ -51,10 +51,11 @@ class Project:
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
             "images": [
-                img if isinstance(img, dict) else str(img) for img in self.images
+                img.to_dict() if hasattr(img, "to_dict") else img for img in self.images
             ],
             "classes": [
-                cls if isinstance(cls, dict) else str(cls) for cls in self.classes
+                cls.to_dict() if hasattr(cls, "to_dict") else cls
+                for cls in self.classes
             ],
         }
 
@@ -83,6 +84,28 @@ class Project:
 
         if "updated_at" in data and isinstance(data["updated_at"], str):
             data["updated_at"] = datetime.fromisoformat(data["updated_at"])
+
+        # Deserialize images list
+        if "images" in data and data["images"]:
+            from models.image import Image
+
+            data["images"] = [
+                Image.from_dict(img) if isinstance(img, dict) else img
+                for img in data["images"]
+            ]
+
+        # Deserialize classes list
+        if "classes" in data and data["classes"]:
+            from models.class_definition import ClassDefinition
+
+            data["classes"] = [
+                (
+                    ClassDefinition.from_dict(cls_def)
+                    if isinstance(cls_def, dict)
+                    else cls_def
+                )
+                for cls_def in data["classes"]
+            ]
 
         # Remove fields that aren't in the dataclass
         valid_fields = {
