@@ -126,3 +126,18 @@ class FileListWidget(QListWidget):
 
         # Item successfully removed
         return True
+
+    def get_current_image_path(self) -> Optional[str]:
+        """
+        Get the full path of the currently selected image.
+
+        Returns:
+            Full path to the selected image, or None if no selection
+        """
+        current_item = self.currentItem()
+        if current_item is None:
+            return None
+
+        # Retrieve full path from item data
+        path = current_item.data(Qt.ItemDataRole.UserRole)
+        return path

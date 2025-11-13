@@ -238,3 +238,98 @@ class TestFileListWidgetRemoveImage:
         # Verify remaining images
         assert file_list_widget.item(0).text() == "image_0.png"
         assert file_list_widget.item(1).text() == "image_2.png"
+
+
+class TestFileListWidgetSelection:
+    """Tests for image selection functionality."""
+
+    def test_get_current_image_path_returns_none_when_no_selection(
+        self, file_list_widget
+    ):
+        """Test that get_current_image_path returns None with no selection."""
+        result = file_list_widget.get_current_image_path()
+        assert result is None
+
+    def test_get_current_image_path_returns_path_when_selected(
+        self, file_list_widget, test_image
+    ):
+        """Test that get_current_image_path returns path when image selected."""
+        file_list_widget.add_image(str(test_image))
+        file_list_widget.setCurrentRow(0)
+        result = file_list_widget.get_current_image_path()
+        assert result == str(test_image)
+
+    def test_selection_changed_signal_emitted(
+        self, file_list_widget, test_image, qtbot
+    ):
+        """Test that currentItemChanged signal is emitted on selection change."""
+        file_list_widget.add_image(str(test_image))
+
+        with qtbot.waitSignal(
+            file_list_widget.currentItemChanged, timeout=1000
+        ) as blocker:
+            file_list_widget.setCurrentRow(0)
+
+        # Signal should be emitted
+        assert blocker.signal_triggered
+
+    def test_selection_changed_with_multiple_images(
+        self, file_list_widget, tmp_path, qtbot
+    ):
+        """Test selection changes correctly with multiple images."""
+        from PyQt6.QtGui import QColor, QImage
+
+        # Create and add multiple images
+        images = []
+        for i in range(3):
+            img = QImage(100, 100, QImage.Format.Format_RGB32)
+            img.fill(QColor(i * 50, i * 50, 255))
+            path = tmp_path / f"image_{i}.png"
+            img.save(str(path))
+            file_list_widget.add_image(str(path))
+            images.append(path)
+
+        # Select first image
+        file_list_widget.setCurrentRow(0)
+        assert file_list_widget.get_current_image_path() == str(images[0])
+
+        # Select second image
+        file_list_widget.setCurrentRow(1)
+        assert file_list_widget.get_current_image_path() == str(images[1])
+
+        # Select third image
+        file_list_widget.setCurrentRow(2)
+        assert file_list_widget.get_current_image_path() == str(images[2])
+
+    def test_clear_selection(self, file_list_widget, test_image):
+        """Test clearing selection."""
+        file_list_widget.add_image(str(test_image))
+        file_list_widget.setCurrentRow(0)
+        assert file_list_widget.get_current_image_path() is not None
+
+        # Clear selection
+        file_list_widget.clearSelection()
+        assert file_list_widget.get_current_image_path() is None
+
+    def test_get_current_image_path_after_removal(self, file_list_widget, tmp_path):
+        """Test that selection updates correctly after removing image."""
+        from PyQt6.QtGui import QColor, QImage
+
+        # Create and add two images
+        for i in range(2):
+            img = QImage(100, 100, QImage.Format.Format_RGB32)
+            img.fill(QColor(i * 50, i * 50, 255))
+            path = tmp_path / f"image_{i}.png"
+            img.save(str(path))
+            file_list_widget.add_image(str(path))
+
+        # Select first image
+        file_list_widget.setCurrentRow(0)
+        assert file_list_widget.item(0).text() == "image_0.png"
+
+        # Remove first image
+        file_list_widget.remove_image(0)
+
+        # Selection should be cleared or moved
+        # (behavior depends on Qt implementation)
+        assert file_list_widget.count() == 1
