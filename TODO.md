@@ -217,21 +217,21 @@ Each task follows TDD cycle: **RED → GREEN → REFACTOR → COMMIT**
 **Duration**: 2 weeks | **Total**: 80h (solo developer)
 **Priority**: P0 (Critical)
 
-### Main Window Structure (16h)
-- [ ] Write test for MainWindow initialization (0.5h) [RED] {M2}
-- [ ] Implement MainWindow with QMainWindow (1.5h) [GREEN] {M2}
-- [ ] Write test for menu bar creation (0.5h) [RED] {M2}
-- [ ] Implement menu bar (File, Edit, View, Tools, Help) (2.0h) [GREEN] {M2}
-- [ ] Write test for toolbar creation (0.5h) [RED] {M2}
-- [ ] Implement toolbar with icons (2.0h) [GREEN] {M2}
-- [ ] Write test for status bar updates (0.5h) [RED] {M2}
-- [ ] Implement status bar with progress indicator (1.5h) [GREEN] {M2}
-- [ ] Write test for dock widget layout (0.5h) [RED] {M2}
-- [ ] Implement dock widgets (file list, class list, properties) (3.0h) [GREEN] {M2}
+### Main Window Structure (16h) ✅
+- [x] Write test for MainWindow initialization (0.5h) [RED] {M2}
+- [x] Implement MainWindow with QMainWindow (1.5h) [GREEN] {M2}
+- [x] Write test for menu bar creation (0.5h) [RED] {M2}
+- [x] Implement menu bar (File, Edit, View, Tools, Help) (2.0h) [GREEN] {M2}
+- [x] Write test for toolbar creation (0.5h) [RED] {M2}
+- [x] Implement toolbar with icons (2.0h) [GREEN] {M2}
+- [x] Write test for status bar updates (0.5h) [RED] {M2}
+- [x] Implement status bar with progress indicator (1.5h) [GREEN] {M2}
+- [x] Write test for dock widget layout (0.5h) [RED] {M2}
+- [x] Implement dock widgets (file list, class list, properties) (3.0h) [GREEN] {M2}
 - [ ] Refactor MainWindow for better organization (1.5h) [REFACTOR] {M2}
 - [ ] Write integration test for window layout (1.0h) [INT] {M2}
 - [ ] Document MainWindow architecture in docs/ (1.0h) [DOC] {M2}
-- [ ] Commit: "feat(ui): add main window structure" (0.5h) [COMMIT] {M2}
+- [x] Commit: "feat(ui): add main window structure" (0.5h) [COMMIT] {M2}
 
 ### Image Canvas Widget (20h)
 - [ ] Write test for ImageCanvas initialization (0.5h) [RED] {M2}
