@@ -11,6 +11,8 @@ taskmaster-mcp.json
 mcp.db
 mcp/
 .roomodes
+.claude/
+ALA-dev-docs/
 
 # Data directories - exclude by default, but keep structure
 data/*
