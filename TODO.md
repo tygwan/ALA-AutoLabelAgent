@@ -214,7 +214,7 @@ Each task follows TDD cycle: **RED → GREEN → REFACTOR → COMMIT**
 ---
 
 ## M2: PyQt6 Image Display & Navigation
-**Duration**: 2 weeks | **Total**: 80h (solo developer) | **Progress**: 36h/80h (45%)
+**Duration**: 2 weeks | **Total**: 80h (solo developer) | **Progress**: 48h/80h (60%)
 **Priority**: P0 (Critical)
 
 ### Main Window Structure (16h) ✅
@@ -253,22 +253,22 @@ Each task follows TDD cycle: **RED → GREEN → REFACTOR → COMMIT**
 - [x] Document ImageCanvas API in docs/ (1.0h) [DOC] {M2}
 - [x] Commit: "feat(ui): add image canvas widget" (0.5h) [COMMIT] {M2}
 
-### File List Widget (12h)
-- [ ] Write test for FileListWidget initialization (0.5h) [RED] {M2}
-- [ ] Implement FileListWidget with QListWidget (1.0h) [GREEN] {M2}
-- [ ] Write test for add_image() method (0.5h) [RED] {M2}
-- [ ] Implement add_image() with thumbnail (1.5h) [GREEN] {M2}
-- [ ] Write test for remove_image() method (0.5h) [RED] {M2}
-- [ ] Implement remove_image() (0.5h) [GREEN] {M2}
-- [ ] Write test for image selection (0.5h) [RED] {M2}
-- [ ] Implement selection changed signal (1.0h) [GREEN] {M2}
-- [ ] Write test for drag-and-drop support (0.5h) [RED] {M2}
-- [ ] Implement drag-and-drop for image import (2.0h) [GREEN] {M2}
-- [ ] Write test for thumbnail caching (0.5h) [RED] {M2}
-- [ ] Implement thumbnail cache with QPixmapCache (1.0h) [GREEN] {M2}
-- [ ] Refactor FileListWidget for efficiency (1.0h) [REFACTOR] {M2}
-- [ ] Write integration test for file operations (1.0h) [INT] {M2}
-- [ ] Commit: "feat(ui): add file list widget" (0.5h) [COMMIT] {M2}
+### File List Widget (12h) ✅
+- [x] Write test for FileListWidget initialization (0.5h) [RED] {M2}
+- [x] Implement FileListWidget with QListWidget (1.0h) [GREEN] {M2}
+- [x] Write test for add_image() method (0.5h) [RED] {M2}
+- [x] Implement add_image() with thumbnail (1.5h) [GREEN] {M2}
+- [x] Write test for remove_image() method (0.5h) [RED] {M2}
+- [x] Implement remove_image() (0.5h) [GREEN] {M2}
+- [x] Write test for image selection (0.5h) [RED] {M2}
+- [x] Implement selection changed signal (1.0h) [GREEN] {M2}
+- [x] Write test for drag-and-drop support (0.5h) [RED] {M2}
+- [x] Implement drag-and-drop for image import (2.0h) [GREEN] {M2}
+- [x] Write test for thumbnail caching (0.5h) [RED] {M2}
+- [x] Implement thumbnail cache with QPixmapCache (1.0h) [GREEN] {M2}
+- [x] Refactor FileListWidget for efficiency (1.0h) [REFACTOR] {M2}
+- [x] Write integration test for file operations (1.0h) [INT] {M2}
+- [x] Commit: "feat(ui): add file list widget" (0.5h) [COMMIT] {M2}
 
 ### Class List Widget (10h)
 - [ ] Write test for ClassListWidget initialization (0.5h) [RED] {M2}
