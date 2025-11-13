@@ -228,29 +228,29 @@ Each task follows TDD cycle: **RED → GREEN → REFACTOR → COMMIT**
 - [x] Implement status bar with progress indicator (1.5h) [GREEN] {M2}
 - [x] Write test for dock widget layout (0.5h) [RED] {M2}
 - [x] Implement dock widgets (file list, class list, properties) (3.0h) [GREEN] {M2}
-- [ ] Refactor MainWindow for better organization (1.5h) [REFACTOR] {M2}
-- [ ] Write integration test for window layout (1.0h) [INT] {M2}
-- [ ] Document MainWindow architecture in docs/ (1.0h) [DOC] {M2}
+- [x] Refactor MainWindow for better organization (1.5h) [REFACTOR] {M2}
+- [x] Write integration test for window layout (1.0h) [INT] {M2}
+- [x] Document MainWindow architecture in docs/ (1.0h) [DOC] {M2}
 - [x] Commit: "feat(ui): add main window structure" (0.5h) [COMMIT] {M2}
 
 ### Image Canvas Widget (20h)
-- [ ] Write test for ImageCanvas initialization (0.5h) [RED] {M2}
-- [ ] Implement ImageCanvas with QGraphicsView (2.0h) [GREEN] {M2}
-- [ ] Write test for QGraphicsScene setup (0.5h) [RED] {M2}
-- [ ] Implement QGraphicsScene with QPixmapItem (1.5h) [GREEN] {M2}
-- [ ] Write test for image loading to canvas (0.5h) [RED] {M2}
-- [ ] Implement load_image() with QPixmap (1.5h) [GREEN] {M2}
-- [ ] Write test for zoom in/out (0.5h) [RED] {M2}
-- [ ] Implement zoom with mouse wheel (2.0h) [GREEN] {M2}
-- [ ] Write test for pan functionality (0.5h) [RED] {M2}
-- [ ] Implement pan with mouse drag (2.0h) [GREEN] {M2}
-- [ ] Write test for fit-to-window (0.5h) [RED] {M2}
-- [ ] Implement fit_to_window() method (1.0h) [GREEN] {M2}
-- [ ] Write test for coordinate transformation (0.5h) [RED] {M2}
-- [ ] Implement image-to-canvas coordinate mapping (1.5h) [GREEN] {M2}
-- [ ] Refactor ImageCanvas for performance (2.0h) [REFACTOR] {M2}
-- [ ] Write integration test for canvas interactions (1.5h) [INT] {M2}
-- [ ] Document ImageCanvas API in docs/ (1.0h) [DOC] {M2}
+- [x] Write test for ImageCanvas initialization (0.5h) [RED] {M2}
+- [x] Implement ImageCanvas with QGraphicsView (2.0h) [GREEN] {M2}
+- [x] Write test for QGraphicsScene setup (0.5h) [RED] {M2}
+- [x] Implement QGraphicsScene with QPixmapItem (1.5h) [GREEN] {M2}
+- [x] Write test for image loading to canvas (0.5h) [RED] {M2}
+- [x] Implement load_image() with QPixmap (1.5h) [GREEN] {M2}
+- [x] Write test for zoom in/out (0.5h) [RED] {M2}
+- [x] Implement zoom with mouse wheel (2.0h) [GREEN] {M2}
+- [x] Write test for pan functionality (0.5h) [RED] {M2}
+- [x] Implement pan with mouse drag (2.0h) [GREEN] {M2}
+- [x] Write test for fit-to-window (0.5h) [RED] {M2}
+- [x] Implement fit_to_window() method (1.0h) [GREEN] {M2}
+- [x] Write test for coordinate transformation (0.5h) [RED] {M2}
+- [x] Implement image-to-canvas coordinate mapping (1.5h) [GREEN] {M2}
+- [x] Refactor ImageCanvas for performance (2.0h) [REFACTOR] {M2}
+- [x] Write integration test for canvas interactions (1.5h) [INT] {M2}
+- [x] Document ImageCanvas API in docs/ (1.0h) [DOC] {M2}
 - [ ] Commit: "feat(ui): add image canvas widget" (0.5h) [COMMIT] {M2}
 
 ### File List Widget (12h)
