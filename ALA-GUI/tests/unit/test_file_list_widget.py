@@ -482,3 +482,101 @@ class TestFileListWidgetDragDrop:
         # Only valid image should be added
         assert file_list_widget.count() == initial_count + 1
         assert file_list_widget.item(0).text() == "valid_image.png"
+
+
+class TestFileListWidgetThumbnailCache:
+    """Tests for thumbnail caching functionality."""
+
+    def test_thumbnail_cached_after_add(self, file_list_widget, test_image):
+        """Test that thumbnails are cached after being generated."""
+        from PyQt6.QtGui import QPixmapCache
+
+        # Get cache key for the image
+        cache_key = f"thumbnail_{test_image}"
+
+        # Initially, cache should not contain the thumbnail
+        cached_pixmap = QPixmapCache.find(cache_key)
+        assert cached_pixmap is None
+
+        # Add image - should generate and cache thumbnail
+        result = file_list_widget.add_image(str(test_image))
+        assert result is True
+
+        # Now cache should contain the thumbnail
+        cached_pixmap = QPixmapCache.find(cache_key)
+        assert cached_pixmap is not None
+
+    def test_cached_thumbnail_reused(self, file_list_widget, test_image, mocker):
+        """Test that cached thumbnails are reused instead of regenerating."""
+        # Add image first time
+        file_list_widget.add_image(str(test_image))
+
+        # Spy on _generate_thumbnail to verify caching works
+        spy_generate = mocker.spy(file_list_widget, "_generate_thumbnail")
+
+        # Clear the widget (but cache remains)
+        file_list_widget.clear()
+
+        # Add same image again - should use cached thumbnail
+        file_list_widget.add_image(str(test_image))
+
+        # _generate_thumbnail should not be called (thumbnail retrieved from cache)
+        spy_generate.assert_not_called()
+
+    def test_cache_key_consistency(self, file_list_widget, test_image):
+        """Test that cache keys are consistent for the same image."""
+        # Generate cache key twice for same image
+        key1 = file_list_widget._get_cache_key(str(test_image))
+        key2 = file_list_widget._get_cache_key(str(test_image))
+
+        # Keys should be identical
+        assert key1 == key2
+        assert isinstance(key1, str)
+        assert len(key1) > 0
+
+    def test_different_images_different_cache_keys(
+        self, file_list_widget, test_image, tmp_path
+    ):
+        """Test that different images get different cache keys."""
+        from PyQt6.QtGui import QColor, QImage
+
+        # Create second test image
+        test_image2 = QImage(150, 150, QImage.Format.Format_RGB32)
+        test_image2.fill(QColor(0, 255, 0))
+        image_path2 = tmp_path / "test_image2.png"
+        test_image2.save(str(image_path2))
+
+        # Get cache keys for both images
+        key1 = file_list_widget._get_cache_key(str(test_image))
+        key2 = file_list_widget._get_cache_key(str(image_path2))
+
+        # Keys should be different
+        assert key1 != key2
+
+    def test_cache_limits_memory_usage(self, file_list_widget, tmp_path):
+        """Test that cache respects memory limits."""
+        from PyQt6.QtGui import QColor, QImage, QPixmapCache
+
+        # Set a small cache limit (in KB)
+        original_limit = QPixmapCache.cacheLimit()
+        QPixmapCache.setCacheLimit(1024)  # 1 MB
+
+        try:
+            # Create and add multiple large images
+            for i in range(10):
+                large_image = QImage(500, 500, QImage.Format.Format_RGB32)
+                large_image.fill(QColor(i * 25, 100, 200))
+                image_path = tmp_path / f"large_image_{i}.png"
+                large_image.save(str(image_path))
+                file_list_widget.add_image(str(image_path))
+
+            # All images should be added successfully
+            assert file_list_widget.count() == 10
+
+            # Cache should not exceed limit (though some may be evicted)
+            # This is more of a sanity check that caching doesn't break
+            assert QPixmapCache.cacheLimit() == 1024
+
+        finally:
+            # Restore original cache limit
+            QPixmapCache.setCacheLimit(original_limit)

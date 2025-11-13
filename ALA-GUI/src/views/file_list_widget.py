@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Optional
 
 from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtGui import QDragEnterEvent, QDropEvent, QIcon, QPixmap
+from PyQt6.QtGui import QDragEnterEvent, QDropEvent, QIcon, QPixmap, QPixmapCache
 from PyQt6.QtWidgets import QAbstractItemView, QListWidget, QListWidgetItem, QWidget
 
 
@@ -69,6 +69,8 @@ class FileListWidget(QListWidget):
         """
         Add an image to the file list with thumbnail.
 
+        Uses QPixmapCache to cache thumbnails for improved performance.
+
         Args:
             image_path: Path to the image file
 
@@ -80,19 +82,24 @@ class FileListWidget(QListWidget):
         if not path.exists() or not path.is_file():
             return False
 
-        # Try to load image as QPixmap
-        pixmap = QPixmap(str(path))
-        if pixmap.isNull():
-            # Not a valid image file
-            return False
+        # Generate cache key for this image
+        cache_key = self._get_cache_key(str(path))
 
-        # Create thumbnail - scale to icon size while maintaining aspect ratio
-        icon_size = self.iconSize()
-        thumbnail = pixmap.scaled(
-            icon_size,
-            Qt.AspectRatioMode.KeepAspectRatio,
-            Qt.TransformationMode.SmoothTransformation,
-        )
+        # Try to get thumbnail from cache
+        thumbnail = QPixmapCache.find(cache_key)
+
+        if thumbnail is None:
+            # Not in cache - load image and generate thumbnail
+            pixmap = QPixmap(str(path))
+            if pixmap.isNull():
+                # Not a valid image file
+                return False
+
+            # Generate thumbnail
+            thumbnail = self._generate_thumbnail(pixmap)
+
+            # Store thumbnail in cache
+            QPixmapCache.insert(cache_key, thumbnail)
 
         # Create list item with filename as text
         item = QListWidgetItem(path.name)
@@ -144,6 +151,36 @@ class FileListWidget(QListWidget):
         # Retrieve full path from item data
         path = current_item.data(Qt.ItemDataRole.UserRole)
         return path
+
+    def _get_cache_key(self, image_path: str) -> str:
+        """
+        Generate a cache key for an image path.
+
+        Args:
+            image_path: Path to the image file
+
+        Returns:
+            Cache key string
+        """
+        # Use the absolute path as cache key for consistency
+        return f"thumbnail_{Path(image_path).resolve()}"
+
+    def _generate_thumbnail(self, pixmap: QPixmap) -> QPixmap:
+        """
+        Generate a thumbnail from a pixmap.
+
+        Args:
+            pixmap: Source pixmap
+
+        Returns:
+            Thumbnail pixmap scaled to icon size
+        """
+        icon_size = self.iconSize()
+        return pixmap.scaled(
+            icon_size,
+            Qt.AspectRatioMode.KeepAspectRatio,
+            Qt.TransformationMode.SmoothTransformation,
+        )
 
     def dragEnterEvent(self, event: QDragEnterEvent) -> None:
         """
