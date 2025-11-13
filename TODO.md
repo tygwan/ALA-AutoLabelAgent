@@ -214,7 +214,7 @@ Each task follows TDD cycle: **RED → GREEN → REFACTOR → COMMIT**
 ---
 
 ## M2: PyQt6 Image Display & Navigation
-**Duration**: 2 weeks | **Total**: 80h (solo developer)
+**Duration**: 2 weeks | **Total**: 80h (solo developer) | **Progress**: 36h/80h (45%)
 **Priority**: P0 (Critical)
 
 ### Main Window Structure (16h) ✅
@@ -233,7 +233,7 @@ Each task follows TDD cycle: **RED → GREEN → REFACTOR → COMMIT**
 - [x] Document MainWindow architecture in docs/ (1.0h) [DOC] {M2}
 - [x] Commit: "feat(ui): add main window structure" (0.5h) [COMMIT] {M2}
 
-### Image Canvas Widget (20h)
+### Image Canvas Widget (20h) ✅
 - [x] Write test for ImageCanvas initialization (0.5h) [RED] {M2}
 - [x] Implement ImageCanvas with QGraphicsView (2.0h) [GREEN] {M2}
 - [x] Write test for QGraphicsScene setup (0.5h) [RED] {M2}
@@ -251,7 +251,7 @@ Each task follows TDD cycle: **RED → GREEN → REFACTOR → COMMIT**
 - [x] Refactor ImageCanvas for performance (2.0h) [REFACTOR] {M2}
 - [x] Write integration test for canvas interactions (1.5h) [INT] {M2}
 - [x] Document ImageCanvas API in docs/ (1.0h) [DOC] {M2}
-- [ ] Commit: "feat(ui): add image canvas widget" (0.5h) [COMMIT] {M2}
+- [x] Commit: "feat(ui): add image canvas widget" (0.5h) [COMMIT] {M2}
 
 ### File List Widget (12h)
 - [ ] Write test for FileListWidget initialization (0.5h) [RED] {M2}
