@@ -7,6 +7,7 @@ class definitions, and model inference engines.
 
 from models.annotation import Annotation, AnnotationType
 from models.class_definition import ClassDefinition
+from models.florence2_model import Florence2Model
 from models.image import Image
 from models.model_inference_engine import ModelInferenceEngine
 from models.project import Project
@@ -16,6 +17,7 @@ __all__ = [
     "Annotation",
     "AnnotationType",
     "ClassDefinition",
+    "Florence2Model",
     "Image",
     "ModelInferenceEngine",
     "Project",
