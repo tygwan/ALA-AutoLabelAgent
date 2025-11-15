@@ -2,12 +2,13 @@
 Data models for ALA-GUI.
 
 This module contains the core data structures for projects, images, annotations,
-and class definitions.
+class definitions, and model inference engines.
 """
 
 from models.annotation import Annotation, AnnotationType
 from models.class_definition import ClassDefinition
 from models.image import Image
+from models.model_inference_engine import ModelInferenceEngine
 from models.project import Project
 
 __all__ = [
@@ -15,5 +16,6 @@ __all__ = [
     "AnnotationType",
     "ClassDefinition",
     "Image",
+    "ModelInferenceEngine",
     "Project",
 ]
