@@ -99,3 +99,132 @@ class ShortcutManager(QObject):
         for action_name, action in self._shortcuts.items():
             result[action_name] = action.shortcut().toString()
         return result
+
+    def setup_default_shortcuts(self) -> None:
+        """
+        Register all default keyboard shortcuts for the application.
+
+        This method sets up shortcuts for:
+        - Navigation (arrow keys, home, end)
+        - Zoom (Ctrl+/-, Ctrl+0, Ctrl+F)
+        - File operations (Ctrl+O, Ctrl+S, etc.)
+        - Annotation tools (R, P, Del)
+        - Undo/Redo (Ctrl+Z, Ctrl+Y)
+
+        Note: Callbacks need to be connected by the parent window.
+        """
+        # Get parent window
+        window = self.parent()
+
+        # Navigation shortcuts
+        self.register_shortcut(
+            "next_image",
+            "Right",
+            lambda: self._safe_call(window, "next_image"),
+            "Next image",
+        )
+        self.register_shortcut(
+            "prev_image",
+            "Left",
+            lambda: self._safe_call(window, "previous_image"),
+            "Previous image",
+        )
+        self.register_shortcut(
+            "first_image",
+            "Home",
+            lambda: self._safe_call(window, "first_image"),
+            "First image",
+        )
+        self.register_shortcut(
+            "last_image",
+            "End",
+            lambda: self._safe_call(window, "last_image"),
+            "Last image",
+        )
+
+        # Zoom shortcuts
+        self.register_shortcut(
+            "zoom_in",
+            "Ctrl++",
+            lambda: self._safe_call(window, "zoom_in"),
+            "Zoom in",
+        )
+        self.register_shortcut(
+            "zoom_out",
+            "Ctrl+-",
+            lambda: self._safe_call(window, "zoom_out"),
+            "Zoom out",
+        )
+        self.register_shortcut(
+            "zoom_reset",
+            "Ctrl+0",
+            lambda: self._safe_call(window, "zoom_reset"),
+            "Reset zoom",
+        )
+        self.register_shortcut(
+            "zoom_fit",
+            "Ctrl+F",
+            lambda: self._safe_call(window, "zoom_fit"),
+            "Fit to window",
+        )
+
+        # File operation shortcuts
+        self.register_shortcut(
+            "open_file",
+            "Ctrl+O",
+            lambda: self._safe_call(window, "open_file"),
+            "Open file",
+        )
+        self.register_shortcut(
+            "save", "Ctrl+S", lambda: self._safe_call(window, "save"), "Save"
+        )
+        self.register_shortcut(
+            "save_as",
+            "Ctrl+Shift+S",
+            lambda: self._safe_call(window, "save_as"),
+            "Save as",
+        )
+        self.register_shortcut(
+            "quit", "Ctrl+Q", lambda: self._safe_call(window, "quit"), "Quit"
+        )
+
+        # Tool shortcuts
+        self.register_shortcut(
+            "tool_rectangle",
+            "R",
+            lambda: self._safe_call(window, "select_rectangle_tool"),
+            "Rectangle tool",
+        )
+        self.register_shortcut(
+            "tool_polygon",
+            "P",
+            lambda: self._safe_call(window, "select_polygon_tool"),
+            "Polygon tool",
+        )
+        self.register_shortcut(
+            "delete_annotation",
+            "Del",
+            lambda: self._safe_call(window, "delete_annotation"),
+            "Delete annotation",
+        )
+
+        # Undo/Redo shortcuts
+        self.register_shortcut(
+            "undo", "Ctrl+Z", lambda: self._safe_call(window, "undo"), "Undo"
+        )
+        self.register_shortcut(
+            "redo", "Ctrl+Y", lambda: self._safe_call(window, "redo"), "Redo"
+        )
+
+    def _safe_call(self, window: QWidget, method_name: str) -> None:
+        """
+        Safely call a method on the window if it exists.
+
+        Args:
+            window: The window object
+            method_name: Name of the method to call
+        """
+        if hasattr(window, method_name):
+            method = getattr(window, method_name)
+            if callable(method):
+                method()

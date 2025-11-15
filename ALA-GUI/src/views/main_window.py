@@ -50,6 +50,9 @@ class MainWindow(QMainWindow):
         # Initialize actions as instance variables
         self._init_actions()
 
+        # Initialize shortcut manager
+        self._init_shortcuts()
+
         # Set up UI components
         self.init_ui()
 
@@ -340,3 +343,103 @@ class MainWindow(QMainWindow):
             view_menu.addAction(self.file_dock.toggleViewAction())
             view_menu.addAction(self.class_dock.toggleViewAction())
             view_menu.addAction(self.props_dock.toggleViewAction())
+
+    def _init_shortcuts(self) -> None:
+        """Initialize keyboard shortcuts using ShortcutManager."""
+        from controllers.shortcut_manager import ShortcutManager
+
+        self.shortcut_manager = ShortcutManager(self)
+        self.shortcut_manager.setup_default_shortcuts()
+
+    # Navigation shortcut handlers
+    def next_image(self) -> None:
+        """Navigate to next image in file list."""
+        # TODO: Implement actual navigation logic
+        self.statusBar().showMessage("Next image", 2000)
+
+    def previous_image(self) -> None:
+        """Navigate to previous image in file list."""
+        # TODO: Implement actual navigation logic
+        self.statusBar().showMessage("Previous image", 2000)
+
+    def first_image(self) -> None:
+        """Navigate to first image in file list."""
+        # TODO: Implement actual navigation logic
+        self.statusBar().showMessage("First image", 2000)
+
+    def last_image(self) -> None:
+        """Navigate to last image in file list."""
+        # TODO: Implement actual navigation logic
+        self.statusBar().showMessage("Last image", 2000)
+
+    # Zoom shortcut handlers
+    def zoom_in(self) -> None:
+        """Zoom in on current image."""
+        if hasattr(self, "image_canvas") and self.image_canvas:
+            self.image_canvas.zoom_in()
+            self.statusBar().showMessage("Zoom in", 2000)
+
+    def zoom_out(self) -> None:
+        """Zoom out on current image."""
+        if hasattr(self, "image_canvas") and self.image_canvas:
+            self.image_canvas.zoom_out()
+            self.statusBar().showMessage("Zoom out", 2000)
+
+    def zoom_reset(self) -> None:
+        """Reset zoom to 100%."""
+        if hasattr(self, "image_canvas") and self.image_canvas:
+            self.image_canvas.reset_zoom()
+            self.statusBar().showMessage("Reset zoom", 2000)
+
+    def zoom_fit(self) -> None:
+        """Fit image to window."""
+        if hasattr(self, "image_canvas") and self.image_canvas:
+            self.image_canvas.fit_to_window()
+            self.statusBar().showMessage("Fit to window", 2000)
+
+    # File operation shortcut handlers
+    def open_file(self) -> None:
+        """Open file dialog."""
+        # TODO: Implement file dialog
+        self.statusBar().showMessage("Open file", 2000)
+
+    def save(self) -> None:
+        """Save current project."""
+        # TODO: Implement save logic
+        self.statusBar().showMessage("Save", 2000)
+
+    def save_as(self) -> None:
+        """Save current project as new file."""
+        # TODO: Implement save as logic
+        self.statusBar().showMessage("Save as", 2000)
+
+    def quit(self) -> None:
+        """Quit application."""
+        self.close()
+
+    # Tool shortcut handlers
+    def select_rectangle_tool(self) -> None:
+        """Select rectangle annotation tool."""
+        # TODO: Implement tool selection
+        self.statusBar().showMessage("Rectangle tool selected", 2000)
+
+    def select_polygon_tool(self) -> None:
+        """Select polygon annotation tool."""
+        # TODO: Implement tool selection
+        self.statusBar().showMessage("Polygon tool selected", 2000)
+
+    def delete_annotation(self) -> None:
+        """Delete selected annotation."""
+        # TODO: Implement annotation deletion
+        self.statusBar().showMessage("Delete annotation", 2000)
+
+    # Undo/Redo shortcut handlers
+    def undo(self) -> None:
+        """Undo last action."""
+        # TODO: Implement undo logic
+        self.statusBar().showMessage("Undo", 2000)
+
+    def redo(self) -> None:
+        """Redo last undone action."""
+        # TODO: Implement redo logic
+        self.statusBar().showMessage("Redo", 2000)
