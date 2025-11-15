@@ -141,3 +141,43 @@ class ClassListWidget(QListWidget):
         self.addItem(item)
 
         return True
+
+    def remove_class(self, index: int) -> bool:
+        """
+        Remove a class from the list by index.
+
+        Args:
+            index: Index of the class to remove
+
+        Returns:
+            True if class removed successfully, False otherwise
+        """
+        # Validate index
+        if index < 0 or index >= self.count():
+            return False
+
+        # Remove item at index
+        item = self.takeItem(index)
+        if item is None:
+            return False
+
+        # Item successfully removed
+        return True
+
+    def remove_class_by_name(self, class_name: str) -> bool:
+        """
+        Remove a class from the list by name.
+
+        Args:
+            class_name: Name of the class to remove
+
+        Returns:
+            True if class removed successfully, False otherwise
+        """
+        # Find item with matching name
+        for i in range(self.count()):
+            if self.item(i).text() == class_name:
+                return self.remove_class(i)
+
+        # Class not found
+        return False

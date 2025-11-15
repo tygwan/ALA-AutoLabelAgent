@@ -144,3 +144,74 @@ class TestClassListWidgetAddClass:
         item = class_list_widget.item(0)
         icon = item.icon()
         assert not icon.isNull()
+
+
+class TestClassListWidgetRemoveClass:
+    """Tests for removing classes from the widget."""
+
+    def test_remove_class_by_index(self, class_list_widget):
+        """Test removing a class by index."""
+        from PyQt6.QtGui import QColor
+
+        class_list_widget.add_class("Person", QColor(255, 0, 0))
+        class_list_widget.add_class("Car", QColor(0, 255, 0))
+
+        result = class_list_widget.remove_class(0)
+        assert result is True
+        assert class_list_widget.count() == 1
+
+    def test_remove_class_by_name(self, class_list_widget):
+        """Test removing a class by name."""
+        from PyQt6.QtGui import QColor
+
+        class_list_widget.add_class("Person", QColor(255, 0, 0))
+        class_list_widget.add_class("Car", QColor(0, 255, 0))
+
+        result = class_list_widget.remove_class_by_name("Person")
+        assert result is True
+        assert class_list_widget.count() == 1
+        assert class_list_widget.item(0).text() == "Car"
+
+    def test_remove_invalid_index_fails(self, class_list_widget):
+        """Test that removing invalid index fails."""
+        from PyQt6.QtGui import QColor
+
+        class_list_widget.add_class("Person", QColor(255, 0, 0))
+
+        result = class_list_widget.remove_class(5)
+        assert result is False
+        assert class_list_widget.count() == 1
+
+    def test_remove_negative_index_fails(self, class_list_widget):
+        """Test that removing negative index fails."""
+        from PyQt6.QtGui import QColor
+
+        class_list_widget.add_class("Person", QColor(255, 0, 0))
+
+        result = class_list_widget.remove_class(-1)
+        assert result is False
+        assert class_list_widget.count() == 1
+
+    def test_remove_nonexistent_name_fails(self, class_list_widget):
+        """Test that removing nonexistent name fails."""
+        from PyQt6.QtGui import QColor
+
+        class_list_widget.add_class("Person", QColor(255, 0, 0))
+
+        result = class_list_widget.remove_class_by_name("NonExistent")
+        assert result is False
+        assert class_list_widget.count() == 1
+
+    def test_remove_all_classes(self, class_list_widget):
+        """Test removing all classes one by one."""
+        from PyQt6.QtGui import QColor
+
+        class_list_widget.add_class("Person", QColor(255, 0, 0))
+        class_list_widget.add_class("Car", QColor(0, 255, 0))
+        class_list_widget.add_class("Building", QColor(0, 0, 255))
+
+        class_list_widget.remove_class(0)
+        class_list_widget.remove_class(0)
+        class_list_widget.remove_class(0)
+
+        assert class_list_widget.count() == 0
