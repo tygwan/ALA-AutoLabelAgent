@@ -181,3 +181,43 @@ class ClassListWidget(QListWidget):
 
         # Class not found
         return False
+
+    def get_current_class(self) -> Optional[str]:
+        """
+        Get the name of the currently selected class.
+
+        Returns:
+            Class name if a class is selected, None otherwise
+        """
+        current_item = self.currentItem()
+        if current_item is None:
+            return None
+        return current_item.text()
+
+    def get_class_color(self, class_name: str) -> Optional[QColor]:
+        """
+        Get the color of a class by name.
+
+        Args:
+            class_name: Name of the class
+
+        Returns:
+            QColor if class exists, None otherwise
+        """
+        for i in range(self.count()):
+            item = self.item(i)
+            if item.text() == class_name:
+                return item.data(Qt.ItemDataRole.UserRole)
+        return None
+
+    def get_all_classes(self) -> list[str]:
+        """
+        Get a list of all class names.
+
+        Returns:
+            List of class names
+        """
+        classes = []
+        for i in range(self.count()):
+            classes.append(self.item(i).text())
+        return classes

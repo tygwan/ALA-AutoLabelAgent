@@ -215,3 +215,56 @@ class TestClassListWidgetRemoveClass:
         class_list_widget.remove_class(0)
 
         assert class_list_widget.count() == 0
+
+
+class TestClassListWidgetGetters:
+    """Tests for getter methods."""
+
+    def test_get_current_class(self, class_list_widget):
+        """Test getting the currently selected class name."""
+        from PyQt6.QtGui import QColor
+
+        class_list_widget.add_class("Person", QColor(255, 0, 0))
+        class_list_widget.add_class("Car", QColor(0, 255, 0))
+
+        class_list_widget.setCurrentRow(0)
+        assert class_list_widget.get_current_class() == "Person"
+
+        class_list_widget.setCurrentRow(1)
+        assert class_list_widget.get_current_class() == "Car"
+
+    def test_get_current_class_no_selection(self, class_list_widget):
+        """Test getting current class with no selection."""
+        from PyQt6.QtGui import QColor
+
+        class_list_widget.add_class("Person", QColor(255, 0, 0))
+        assert class_list_widget.get_current_class() is None
+
+    def test_get_class_color(self, class_list_widget):
+        """Test getting a class color by name."""
+        from PyQt6.QtGui import QColor
+
+        red = QColor(255, 0, 0)
+        class_list_widget.add_class("Person", red)
+
+        color = class_list_widget.get_class_color("Person")
+        assert color == red
+
+    def test_get_class_color_nonexistent(self, class_list_widget):
+        """Test getting color for nonexistent class."""
+        color = class_list_widget.get_class_color("NonExistent")
+        assert color is None
+
+    def test_get_all_classes(self, class_list_widget):
+        """Test getting all class names."""
+        from PyQt6.QtGui import QColor
+
+        class_list_widget.add_class("Person", QColor(255, 0, 0))
+        class_list_widget.add_class("Car", QColor(0, 255, 0))
+        class_list_widget.add_class("Building", QColor(0, 0, 255))
+
+        classes = class_list_widget.get_all_classes()
+        assert len(classes) == 3
+        assert "Person" in classes
+        assert "Car" in classes
+        assert "Building" in classes
