@@ -19,7 +19,10 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from views.auto_annotate_dialog import AutoAnnotateDialog
+from views.batch_process_dialog import BatchProcessDialog
 from views.class_list_widget import ClassListWidget
+from views.export_dialog import ExportDialog
 from views.file_list_widget import FileListWidget
 from views.image_canvas import ImageCanvas
 
@@ -93,6 +96,7 @@ class MainWindow(QMainWindow):
         self.export_action = QAction("&Export Annotations...", self)
         self.export_action.setShortcut("Ctrl+E")
         self.export_action.setStatusTip("Export annotations to COCO/YOLO format")
+        self.export_action.triggered.connect(self._open_export_dialog)
 
         self.exit_action = QAction("E&xit", self)
         self.exit_action.setShortcut("Ctrl+Q")
@@ -139,6 +143,12 @@ class MainWindow(QMainWindow):
         self.auto_annotate_action = QAction("&Auto-Annotate...", self)
         self.auto_annotate_action.setShortcut("Ctrl+A")
         self.auto_annotate_action.setStatusTip("Run auto-annotation with AI models")
+        self.auto_annotate_action.triggered.connect(self._open_auto_annotate_dialog)
+
+        self.batch_process_action = QAction("&Batch Process...", self)
+        self.batch_process_action.setShortcut("Ctrl+B")
+        self.batch_process_action.setStatusTip("Process multiple images at once")
+        self.batch_process_action.triggered.connect(self._open_batch_process_dialog)
 
         self.few_shot_action = QAction("&Few-Shot Classification...", self)
         self.few_shot_action.setShortcut("Ctrl+F")
@@ -239,6 +249,7 @@ class MainWindow(QMainWindow):
             tools_menu: Tools menu to add actions to
         """
         tools_menu.addAction(self.auto_annotate_action)
+        tools_menu.addAction(self.batch_process_action)
         tools_menu.addAction(self.few_shot_action)
         tools_menu.addSeparator()
         tools_menu.addAction(self.train_action)
@@ -276,6 +287,11 @@ class MainWindow(QMainWindow):
         toolbar.addAction(self.zoom_in_action)
         toolbar.addAction(self.zoom_out_action)
         toolbar.addAction(self.fit_action)
+        toolbar.addSeparator()
+
+        # Tools actions
+        toolbar.addAction(self.auto_annotate_action)
+        toolbar.addAction(self.batch_process_action)
 
     def _create_status_bar(self) -> None:
         """Create the status bar for messages and progress."""
@@ -484,3 +500,102 @@ class MainWindow(QMainWindow):
         else:
             # User clicked Cancel
             self.statusBar().showMessage("Settings cancelled", 2000)
+
+    # Auto-annotation dialog handler
+    def _open_auto_annotate_dialog(self) -> None:
+        """Open auto-annotation dialog for current image."""
+        # Check if image is loaded
+        if not self.image_canvas.current_image:
+            self.statusBar().showMessage("No image loaded", 3000)
+            return
+
+        # Get current image
+        import cv2
+
+        image_bgr = cv2.imread(self.image_canvas.current_image)
+        if image_bgr is None:
+            self.statusBar().showMessage("Failed to load image", 3000)
+            return
+
+        image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
+
+        # Create and show dialog
+        dialog = AutoAnnotateDialog(self)
+        dialog.set_image(image_rgb)
+
+        # Connect signals
+        dialog.annotation_accepted.connect(self._on_annotation_accepted)
+        dialog.annotation_rejected.connect(self._on_annotation_rejected)
+
+        dialog.exec()
+
+    def _on_annotation_accepted(self, results: dict) -> None:
+        """
+        Handle accepted annotation results.
+
+        Args:
+            results: Annotation results dictionary
+        """
+        # Display annotations on canvas
+        boxes = results.get("boxes", [])
+        labels = results.get("labels", [])
+        scores = results.get("scores", [])
+
+        self.image_canvas.display_annotations(boxes, labels, scores)
+        self.statusBar().showMessage(
+            f"Annotation accepted: {len(boxes)} objects detected", 3000
+        )
+
+        # Open export dialog
+        self._open_export_dialog_with_results(results)
+
+    def _on_annotation_rejected(self) -> None:
+        """Handle rejected annotation results."""
+        self.statusBar().showMessage("Annotation rejected", 2000)
+
+    # Batch processing dialog handler
+    def _open_batch_process_dialog(self) -> None:
+        """Open batch processing dialog."""
+        # Get all image paths from file list
+        image_paths = self.file_list_widget.get_all_image_paths()
+
+        if not image_paths:
+            self.statusBar().showMessage("No images in file list", 3000)
+            return
+
+        # Create and show dialog
+        dialog = BatchProcessDialog(self)
+        dialog.set_image_paths(image_paths)
+
+        dialog.exec()
+
+    # Export dialog handler
+    def _open_export_dialog(self) -> None:
+        """Open export dialog for current annotations."""
+        # Check if image is loaded
+        if not self.image_canvas.current_image:
+            self.statusBar().showMessage("No image loaded", 3000)
+            return
+
+        # TODO: Get current annotations from canvas
+        # For now, show empty export dialog
+        dialog = ExportDialog(self)
+        dialog.set_image_path(self.image_canvas.current_image)
+
+        dialog.exec()
+
+    def _open_export_dialog_with_results(self, results: dict) -> None:
+        """
+        Open export dialog with annotation results.
+
+        Args:
+            results: Annotation results dictionary
+        """
+        if not self.image_canvas.current_image:
+            return
+
+        dialog = ExportDialog(self)
+        dialog.set_results(results)
+        dialog.set_image_path(self.image_canvas.current_image)
+
+        dialog.exec()

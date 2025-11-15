@@ -218,3 +218,19 @@ class FileListWidget(QListWidget):
 
         # Accept the drop event
         event.acceptProposedAction()
+
+    def get_all_image_paths(self) -> list[str]:
+        """
+        Get all image paths in the list.
+
+        Returns:
+            List of all image file paths
+        """
+        image_paths = []
+        for i in range(self.list_widget.count()):
+            item = self.list_widget.item(i)
+            if item:
+                path_str = item.data(Qt.ItemDataRole.UserRole)
+                if path_str:
+                    image_paths.append(str(path_str))
+        return image_paths
