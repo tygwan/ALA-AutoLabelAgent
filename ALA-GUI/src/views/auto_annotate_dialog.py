@@ -20,6 +20,7 @@ from PyQt6.QtWidgets import (
 )
 
 from models.model_controller import ModelController
+from widgets.results_preview_widget import ResultsPreviewWidget
 
 
 class AutoAnnotateDialog(QDialog):
@@ -47,6 +48,8 @@ class AutoAnnotateDialog(QDialog):
 
     # Signals
     annotation_complete = pyqtSignal(object)  # results dictionary
+    annotation_accepted = pyqtSignal(object)  # results accepted by user
+    annotation_rejected = pyqtSignal()  # results rejected by user
 
     def __init__(self, parent: Optional[QDialog] = None) -> None:
         """
@@ -73,6 +76,7 @@ class AutoAnnotateDialog(QDialog):
 
         # State
         self._current_image: Optional[np.ndarray] = None
+        self._current_results: Optional[dict] = None
 
     def _create_ui(self) -> None:
         """Create dialog UI components."""
@@ -118,6 +122,11 @@ class AutoAnnotateDialog(QDialog):
         progress_layout.addWidget(self.progress_label)
         layout.addLayout(progress_layout)
 
+        # Results preview (initially hidden)
+        self.results_preview = ResultsPreviewWidget()
+        self.results_preview.hide()
+        layout.addWidget(self.results_preview)
+
         # Buttons
         button_layout = QHBoxLayout()
         self.run_button = QPushButton("Run Auto-Annotation")
@@ -128,6 +137,26 @@ class AutoAnnotateDialog(QDialog):
         button_layout.addWidget(self.run_button)
         button_layout.addWidget(self.cancel_button)
         layout.addLayout(button_layout)
+
+        # Accept/Reject buttons (initially hidden)
+        accept_reject_layout = QHBoxLayout()
+        self.accept_button = QPushButton("✓ Accept Results")
+        self.accept_button.clicked.connect(self.accept_results)
+        self.accept_button.setStyleSheet(
+            "background-color: #4CAF50; color: white; font-weight: bold;"
+        )
+        self.reject_button = QPushButton("✗ Reject & Retry")
+        self.reject_button.clicked.connect(self.reject_results)
+        self.reject_button.setStyleSheet(
+            "background-color: #f44336; color: white; font-weight: bold;"
+        )
+        accept_reject_layout.addWidget(self.accept_button)
+        accept_reject_layout.addWidget(self.reject_button)
+        layout.addLayout(accept_reject_layout)
+
+        # Hide accept/reject initially
+        self.accept_button.hide()
+        self.reject_button.hide()
 
         self.setLayout(layout)
 
@@ -216,10 +245,22 @@ class AutoAnnotateDialog(QDialog):
         Args:
             results: Annotation results from model controller
         """
+        # Store results for accept/reject
+        self._current_results = results
+
+        num_detections = results["metadata"]["num_detections"]
         self.progress_label.setText(
-            f"Complete! Found {results['metadata']['num_detections']} objects"
+            f"Complete! Found {num_detections} objects - Review and Accept/Reject"
         )
         self._reset_buttons()
+
+        # Show results preview
+        self.results_preview.display_results(results)
+        self.results_preview.show()
+
+        # Show accept/reject buttons
+        self.accept_button.show()
+        self.reject_button.show()
 
         # Emit signal
         self.annotation_complete.emit(results)
@@ -233,6 +274,46 @@ class AutoAnnotateDialog(QDialog):
         """
         self.progress_label.setText(f"Error: {error_msg}")
         self._reset_buttons()
+
+    def accept_results(self) -> None:
+        """Accept annotation results and close dialog."""
+        if self._current_results is None:
+            return
+
+        num_detections = self._current_results["metadata"]["num_detections"]
+        self.progress_label.setText(f"✅ Accepted {num_detections} detections")
+
+        # Hide accept/reject buttons
+        self.accept_button.hide()
+        self.reject_button.hide()
+
+        # Emit accepted signal
+        self.annotation_accepted.emit(self._current_results)
+
+        # Close dialog
+        self.accept()
+
+    def reject_results(self) -> None:
+        """Reject annotation results and allow retry."""
+        self.progress_label.setText("❌ Results rejected - Ready to retry")
+
+        # Hide accept/reject buttons
+        self.accept_button.hide()
+        self.reject_button.hide()
+
+        # Hide and clear results preview
+        self.results_preview.clear()
+        self.results_preview.hide()
+
+        # Clear current results
+        self._current_results = None
+
+        # Emit rejected signal
+        self.annotation_rejected.emit()
+
+        # Reset UI for retry
+        self.run_button.setEnabled(True)
+        self.progress_bar.setValue(0)
 
     def _reset_buttons(self) -> None:
         """Reset button states."""
