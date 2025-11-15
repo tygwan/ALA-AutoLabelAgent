@@ -5,7 +5,9 @@ Run this to visually verify the MainWindow implementation.
 """
 
 import sys
+
 from PyQt6.QtWidgets import QApplication
+
 from views.main_window import MainWindow
 
 
@@ -26,7 +28,8 @@ def main():
     print("[OK] Status bar: Shows 'Ready' message")
     print("[OK] Dock widgets: Files (left), Classes (right), Properties (right)")
     print("[OK] Central widget: Placeholder for image canvas")
-    print("\nClose the window to exit.")
+    print("")
+    print("Close the window to exit.")
 
     sys.exit(app.exec())
 

@@ -4,6 +4,7 @@ Main Window for ALA-GUI Application.
 M2: GUI Layer - Main application window with menu bar, toolbar, and dock widgets.
 """
 
+from pathlib import Path
 from typing import Optional
 
 from PyQt6.QtCore import Qt
@@ -18,6 +19,8 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from views.class_list_widget import ClassListWidget
+from views.file_list_widget import FileListWidget
 from views.image_canvas import ImageCanvas
 
 
@@ -108,6 +111,7 @@ class MainWindow(QMainWindow):
         self.prefs_action = QAction("&Preferences...", self)
         self.prefs_action.setShortcut("Ctrl+,")
         self.prefs_action.setStatusTip("Open preferences dialog")
+        self.prefs_action.triggered.connect(self._open_settings_dialog)
 
         # View actions
         self.zoom_in_action = QAction("Zoom &In", self)
@@ -286,19 +290,22 @@ class MainWindow(QMainWindow):
         self.file_dock.setAllowedAreas(
             Qt.DockWidgetArea.LeftDockWidgetArea | Qt.DockWidgetArea.RightDockWidgetArea
         )
-        file_list_placeholder = QLabel("File List\n(To be implemented)")
-        file_list_placeholder.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.file_dock.setWidget(file_list_placeholder)
+        self.file_list_widget = FileListWidget(self)
+        self.file_dock.setWidget(self.file_list_widget)
         self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.file_dock)
+
+        # Connect file list selection to canvas
+        self.file_list_widget.currentItemChanged.connect(
+            self._on_file_selection_changed
+        )
 
         # Class List Dock Widget
         self.class_dock = QDockWidget("Classes", self)
         self.class_dock.setAllowedAreas(
             Qt.DockWidgetArea.LeftDockWidgetArea | Qt.DockWidgetArea.RightDockWidgetArea
         )
-        class_list_placeholder = QLabel("Class List\n(To be implemented)")
-        class_list_placeholder.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.class_dock.setWidget(class_list_placeholder)
+        self.class_list_widget = ClassListWidget(self)
+        self.class_dock.setWidget(self.class_list_widget)
         self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.class_dock)
 
         # Properties Dock Widget
@@ -443,3 +450,37 @@ class MainWindow(QMainWindow):
         """Redo last undone action."""
         # TODO: Implement redo logic
         self.statusBar().showMessage("Redo", 2000)
+
+    # File list event handlers
+    def _on_file_selection_changed(self, current, previous) -> None:
+        """
+        Handle file list selection changes.
+
+        Args:
+            current: Currently selected item
+            previous: Previously selected item
+        """
+        if current is None:
+            return
+
+        selected_path = self.file_list_widget.get_current_image_path()
+        if selected_path and self.image_canvas:
+            self.image_canvas.load_image(selected_path)
+            self.statusBar().showMessage(f"Loaded: {Path(selected_path).name}", 3000)
+
+    # Settings dialog handler
+    def _open_settings_dialog(self) -> None:
+        """Open the settings dialog."""
+        from views.settings_dialog import SettingsDialog
+
+        dialog = SettingsDialog(self)
+
+        # TODO: Load current settings into dialog
+
+        if dialog.exec():
+            # User clicked OK - apply settings
+            # TODO: Save settings and apply them
+            self.statusBar().showMessage("Settings saved", 2000)
+        else:
+            # User clicked Cancel
+            self.statusBar().showMessage("Settings cancelled", 2000)
