@@ -4,10 +4,15 @@ SAM2 Model Integration.
 M3: Model Integration - SAM2 for instance segmentation with point/box prompts.
 """
 
+import os
+import subprocess
+import sys
+import urllib.request
 from typing import Any, Dict, List, Optional, Tuple
 
 import cv2
 import numpy as np
+import torch
 
 from models.model_inference_engine import ModelInferenceEngine
 
@@ -58,11 +63,10 @@ class SAM2Model(ModelInferenceEngine):
         Load SAM2 model from checkpoint.
 
         Args:
-            model_path: Path to SAM2 checkpoint file
+            model_path: Path to SAM2 checkpoint file or "auto" for auto-download
             device: Device to load model on ("cpu", "cuda", "mps")
 
         Raises:
-            FileNotFoundError: If checkpoint file doesn't exist
             RuntimeError: If model loading fails
         """
         self._emit_progress(10, "Loading SAM2 model...")
@@ -71,15 +75,41 @@ class SAM2Model(ModelInferenceEngine):
             # Store device
             self.device = device
 
-            # TODO: Replace with actual SAM2 model loading
-            # from segment_anything import sam_model_registry, SamPredictor
-            # sam = sam_model_registry["vit_h"](checkpoint=model_path)
-            # sam.to(device=device)
-            # self.predictor = SamPredictor(sam)
+            # Auto-download SAM2 if needed
+            if not model_path or model_path == "mock_checkpoint.pth":
+                model_path = self._download_sam2_model()
 
-            # Mock implementation for now
-            self.model = "mock_sam2_model"
-            self.predictor = "mock_predictor"
+            self._emit_progress(30, "Initializing SAM2...")
+
+            # Add SAM2 to Python path
+            self._setup_sam2_path()
+
+            # Import SAM2 components
+            from sam2.build_sam import build_sam2
+            from sam2.sam2_image_predictor import SAM2ImagePredictor
+
+            self._emit_progress(60, "Loading model weights...")
+
+            # Build SAM2 model
+            model_cfg = "sam2_hiera_b+.yaml"
+            sam2_model = build_sam2(model_cfg, model_path)
+
+            # Create predictor
+            self.predictor = SAM2ImagePredictor(sam2_model)
+
+            # Move to device
+            if device == "cuda" and torch.cuda.is_available():
+                self.predictor.model.to("cuda")
+            elif device == "mps" and torch.backends.mps.is_available():
+                self.predictor.model.to("mps")
+            else:
+                self.predictor.model.to("cpu")
+                if device != "cpu":
+                    self._emit_progress(
+                        80, f"Warning: {device} not available, using CPU"
+                    )
+
+            self.model = self.predictor.model
             self.model_path = model_path
 
             self._emit_progress(100, "SAM2 model loaded")
@@ -90,6 +120,62 @@ class SAM2Model(ModelInferenceEngine):
             error_msg = f"Failed to load SAM2 model: {str(e)}"
             self._emit_error(error_msg)
             raise RuntimeError(error_msg) from e
+
+    def _download_sam2_model(self) -> str:
+        """
+        Download SAM2 model checkpoint if not exists.
+
+        Returns:
+            Path to SAM2 checkpoint
+        """
+        cache_dir = os.path.expanduser("~/.cache/autodistill")
+        sam_cache_dir = os.path.join(cache_dir, "segment_anything_2")
+        checkpoint_path = os.path.join(sam_cache_dir, "sam2_hiera_base_plus.pth")
+
+        # Create directory
+        os.makedirs(sam_cache_dir, exist_ok=True)
+
+        # Download if not exists
+        if not os.path.isfile(checkpoint_path):
+            url = (
+                "https://dl.fbaipublicfiles.com/segment_anything_2/"
+                "072824/sam2_hiera_base_plus.pt"
+            )
+            self._emit_progress(20, "Downloading SAM2 checkpoint...")
+            urllib.request.urlretrieve(url, checkpoint_path)
+
+        return checkpoint_path
+
+    def _setup_sam2_path(self) -> None:
+        """Set up SAM2 repository path."""
+        cache_dir = os.path.expanduser("~/.cache/autodistill")
+        sam_cache_dir = os.path.join(cache_dir, "segment_anything_2")
+        sam_repo_dir = os.path.join(sam_cache_dir, "segment-anything-2")
+
+        # Clone SAM2 repository if not exists
+        if not os.path.isdir(sam_repo_dir):
+            self._emit_progress(15, "Cloning SAM2 repository...")
+            os.makedirs(sam_cache_dir, exist_ok=True)
+
+            cur_dir = os.getcwd()
+            os.chdir(sam_cache_dir)
+
+            subprocess.run(
+                [
+                    "git",
+                    "clone",
+                    "https://github.com/facebookresearch/segment-anything-2.git",
+                ],
+                check=True,
+            )
+
+            os.chdir(sam_repo_dir)
+            subprocess.run(["pip", "install", "-e", "."], check=True)
+            os.chdir(cur_dir)
+
+        # Add to Python path
+        if sam_repo_dir not in sys.path:
+            sys.path.insert(0, sam_repo_dir)
 
     def predict(
         self,
@@ -132,56 +218,68 @@ class SAM2Model(ModelInferenceEngine):
         self._emit_progress(20, "Preprocessing image...")
 
         try:
-            # Set image for predictor
-            # self.predictor.set_image(image)
-            self._emit_progress(40, "Generating embeddings...")
-
-            # Prepare prompts (will be used when real SAM2 is integrated)
-            # point_coords = None
-            # point_labels = None
-            # if points:
-            #     point_coords = np.array([[p[0], p[1]] for p in points])
-            #     point_labels = np.array([p[2] for p in points])
-            #
-            # box_coords = None
-            # if box:
-            #     box_coords = np.array(box)
-
-            self._emit_progress(60, "Running segmentation...")
-
-            # TODO: Replace with actual SAM2 prediction
-            # masks, scores, logits = self.predictor.predict(
-            #     point_coords=point_coords,
-            #     point_labels=point_labels,
-            #     box=box_coords,
-            #     multimask_output=kwargs.get('multimask_output', True)
-            # )
-
-            # Mock implementation
-            h, w = image.shape[:2]
-            mock_mask = np.zeros((h, w), dtype=np.uint8)
-
-            # Create a simple circular mask around first point or box center
-            if points:
-                center_x, center_y = points[0][0], points[0][1]
-            elif box:
-                center_x = (box[0] + box[2]) // 2
-                center_y = (box[1] + box[3]) // 2
+            # Ensure image is in RGB format
+            if image.ndim == 3 and image.shape[2] == 3:
+                # Convert RGB to BGR for SAM2 (expects BGR)
+                image_bgr = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
             else:
-                center_x, center_y = w // 2, h // 2
+                image_bgr = image
 
-            # Draw circle
-            radius = min(w, h) // 4
-            y_grid, x_grid = np.ogrid[:h, :w]
-            circle_mask = (x_grid - center_x) ** 2 + (
-                y_grid - center_y
-            ) ** 2 <= radius**2
-            mock_mask[circle_mask] = 1
+            # Set image for predictor
+            self._emit_progress(40, "Generating image embeddings...")
 
-            masks = [mock_mask]
-            scores = [0.95]
+            if self.predictor is None:
+                raise RuntimeError("SAM2 predictor not initialized")
 
-            self._emit_progress(90, "Post-processing...")
+            self.predictor.set_image(image_bgr)
+
+            # Prepare point prompts
+            point_coords = None
+            point_labels = None
+            if points:
+                point_coords = np.array([[p[0], p[1]] for p in points])
+                point_labels = np.array([p[2] for p in points])
+
+            # Prepare box prompt
+            box_coords = None
+            if box:
+                box_coords = np.array(box)
+
+            self._emit_progress(60, "Running SAM2 segmentation...")
+
+            # Run SAM2 prediction
+            with torch.inference_mode():
+                if torch.cuda.is_available() and self.device == "cuda":
+                    with torch.autocast("cuda", dtype=torch.bfloat16):
+                        masks, scores, logits = self.predictor.predict(
+                            point_coords=point_coords,
+                            point_labels=point_labels,
+                            box=box_coords,
+                            multimask_output=kwargs.get("multimask_output", False),
+                        )
+                else:
+                    masks, scores, logits = self.predictor.predict(
+                        point_coords=point_coords,
+                        point_labels=point_labels,
+                        box=box_coords,
+                        multimask_output=kwargs.get("multimask_output", False),
+                    )
+
+            self._emit_progress(80, "Post-processing masks...")
+
+            # Convert to boolean masks
+            masks = masks.astype(bool)
+
+            # Select best mask if multiple
+            if len(masks) > 1 and not kwargs.get("multimask_output", False):
+                best_idx = np.argmax(scores)
+                masks = [masks[best_idx]]
+                scores = [scores[best_idx]]
+            else:
+                masks = list(masks)
+                scores = list(scores)
+
+            self._emit_progress(90, "Finalizing results...")
 
             result = {
                 "masks": masks,

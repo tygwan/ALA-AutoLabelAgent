@@ -7,6 +7,9 @@ M3: Model Integration - Florence-2 for object detection and caption generation.
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
+import torch
+from PIL import Image
+from transformers import AutoModelForCausalLM, AutoProcessor
 
 from models.model_inference_engine import ModelInferenceEngine
 
@@ -58,10 +61,10 @@ class Florence2Model(ModelInferenceEngine):
 
         Args:
             model_path: Path to Florence-2 checkpoint or model name
+                       (e.g., "microsoft/Florence-2-large" or local path)
             device: Device to load model on ("cpu", "cuda", "mps")
 
         Raises:
-            FileNotFoundError: If checkpoint doesn't exist
             RuntimeError: If model loading fails
         """
         self._emit_progress(10, "Loading Florence-2 model...")
@@ -70,17 +73,37 @@ class Florence2Model(ModelInferenceEngine):
             # Store device
             self.device = device
 
-            # TODO: Replace with actual Florence-2 model loading
-            # from transformers import AutoProcessor, AutoModelForCausalLM
-            # self.processor = AutoProcessor.from_pretrained(model_path)
-            # self.model = AutoModelForCausalLM.from_pretrained(
-            #     model_path,
-            #     trust_remote_code=True
-            # ).to(device)
+            # Use model_path or default to Florence-2-large
+            if not model_path or model_path == "mock_checkpoint":
+                model_path = "microsoft/Florence-2-large"
 
-            # Mock implementation for now
-            self.model = "mock_florence2_model"
-            self.processor = "mock_processor"
+            self._emit_progress(30, f"Loading from {model_path}...")
+
+            # Load processor
+            self.processor = AutoProcessor.from_pretrained(
+                model_path, trust_remote_code=True
+            )
+
+            self._emit_progress(60, "Loading model weights...")
+
+            # Load model
+            self.model = AutoModelForCausalLM.from_pretrained(
+                model_path, trust_remote_code=True
+            )
+
+            # Move to device
+            if device == "cuda" and torch.cuda.is_available():
+                self.model = self.model.to("cuda")
+            elif device == "mps" and torch.backends.mps.is_available():
+                self.model = self.model.to("mps")
+            else:
+                self.model = self.model.to("cpu")
+                if device != "cpu":
+                    self._emit_progress(
+                        80, f"Warning: {device} not available, using CPU"
+                    )
+
+            self.model.eval()
             self.model_path = model_path
 
             self._emit_progress(100, "Florence-2 model loaded")
@@ -170,42 +193,74 @@ class Florence2Model(ModelInferenceEngine):
         self._emit_progress(20, "Preprocessing image...")
 
         try:
-            # TODO: Replace with actual Florence-2 detection
-            # inputs = self.processor(
-            #     text=f"<OD>{text_prompt}",
-            #     images=image,
-            #     return_tensors="pt"
-            # ).to(self.device)
-            #
-            # with torch.no_grad():
-            #     outputs = self.model.generate(**inputs)
-            #
-            # results = self.processor.post_process(outputs)
+            # Convert numpy array to PIL Image
+            if isinstance(image, np.ndarray):
+                # Assume RGB format
+                pil_image = Image.fromarray(image.astype("uint8"), "RGB")
+            else:
+                pil_image = image
+
+            # Prepare Florence-2 prompt for caption to phrase grounding
+            task_prompt = "<CAPTION_TO_PHRASE_GROUNDING>"
+            prompt = task_prompt + text_prompt
+
+            self._emit_progress(40, "Preparing inputs...")
+
+            # Prepare inputs
+            if self.processor is None:
+                raise RuntimeError("Processor not initialized")
+
+            inputs = self.processor(
+                text=prompt, images=pil_image, return_tensors="pt"
+            ).to(self.device)
 
             self._emit_progress(60, "Running object detection...")
 
-            # Mock implementation - create random detections
-            h, w = image.shape[:2]
-            classes = [c.strip() for c in text_prompt.split(",")]
+            # Generate with Florence-2
+            with torch.no_grad():
+                generated_ids = self.model.generate(
+                    input_ids=inputs["input_ids"],
+                    pixel_values=inputs["pixel_values"],
+                    max_new_tokens=1024,
+                    early_stopping=False,
+                    do_sample=False,
+                    num_beams=3,
+                )
 
-            # Generate 2-5 random detections
-            num_detections = np.random.randint(2, 6)
+            # Decode output
+            generated_text = self.processor.batch_decode(
+                generated_ids, skip_special_tokens=False
+            )[0]
+
+            self._emit_progress(80, "Post-processing...")
+
+            # Parse results
+            parsed_answer = self.processor.post_process_generation(
+                generated_text,
+                task=task_prompt,
+                image_size=(pil_image.width, pil_image.height),
+            )
+
+            # Extract bounding boxes and labels
             boxes = []
             labels = []
             scores = []
 
-            for i in range(num_detections):
-                # Random box
-                x1 = np.random.randint(0, w // 2)
-                y1 = np.random.randint(0, h // 2)
-                x2 = np.random.randint(x1 + 50, w)
-                y2 = np.random.randint(y1 + 50, h)
+            if "<CAPTION_TO_PHRASE_GROUNDING>" in parsed_answer:
+                grounding_result = parsed_answer["<CAPTION_TO_PHRASE_GROUNDING>"]
 
-                boxes.append((x1, y1, x2, y2))
-                labels.append(classes[i % len(classes)])
-                scores.append(np.random.uniform(confidence_threshold, 1.0))
+                if "bboxes" in grounding_result and "labels" in grounding_result:
+                    for bbox, label in zip(
+                        grounding_result["bboxes"], grounding_result["labels"]
+                    ):
+                        # Convert bbox to (x1, y1, x2, y2) format
+                        x1, y1, x2, y2 = bbox
+                        boxes.append((int(x1), int(y1), int(x2), int(y2)))
+                        labels.append(label)
+                        # Florence-2 doesn't provide scores, use 1.0
+                        scores.append(1.0)
 
-            self._emit_progress(90, "Post-processing...")
+            self._emit_progress(90, "Filtering results...")
 
             result = {
                 "boxes": boxes,
@@ -249,29 +304,54 @@ class Florence2Model(ModelInferenceEngine):
         self._emit_progress(20, "Generating caption...")
 
         try:
-            # TODO: Replace with actual Florence-2 captioning
-            # task = "<DETAILED_CAPTION>" if detailed else "<CAPTION>"
-            # inputs = self.processor(
-            #     text=task,
-            #     images=image,
-            #     return_tensors="pt"
-            # ).to(self.device)
-            #
-            # with torch.no_grad():
-            #     outputs = self.model.generate(**inputs)
-            #
-            # caption = self.processor.decode(outputs[0], skip_special_tokens=True)
-
-            self._emit_progress(70, "Processing caption...")
-
-            # Mock implementation
-            if detailed:
-                caption = (
-                    "A detailed scene showing various objects and activities "
-                    "in the image with multiple people and vehicles."
-                )
+            # Convert numpy array to PIL Image
+            if isinstance(image, np.ndarray):
+                pil_image = Image.fromarray(image.astype("uint8"), "RGB")
             else:
-                caption = "A scene with people and objects."
+                pil_image = image
+
+            # Choose task based on detailed flag
+            task_prompt = "<DETAILED_CAPTION>" if detailed else "<CAPTION>"
+
+            self._emit_progress(40, "Preparing inputs...")
+
+            # Prepare inputs
+            if self.processor is None:
+                raise RuntimeError("Processor not initialized")
+
+            inputs = self.processor(
+                text=task_prompt, images=pil_image, return_tensors="pt"
+            ).to(self.device)
+
+            self._emit_progress(60, "Generating caption...")
+
+            # Generate caption
+            with torch.no_grad():
+                generated_ids = self.model.generate(
+                    input_ids=inputs["input_ids"],
+                    pixel_values=inputs["pixel_values"],
+                    max_new_tokens=1024,
+                    early_stopping=False,
+                    do_sample=False,
+                    num_beams=3,
+                )
+
+            # Decode output
+            generated_text = self.processor.batch_decode(
+                generated_ids, skip_special_tokens=False
+            )[0]
+
+            self._emit_progress(80, "Processing caption...")
+
+            # Parse results
+            parsed_answer = self.processor.post_process_generation(
+                generated_text,
+                task=task_prompt,
+                image_size=(pil_image.width, pil_image.height),
+            )
+
+            # Extract caption
+            caption = parsed_answer.get(task_prompt, "")
 
             self._emit_progress(100, "Caption generated")
             self.prediction_complete.emit({"caption": caption})
