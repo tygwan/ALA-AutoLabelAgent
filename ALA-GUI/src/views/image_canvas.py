@@ -7,9 +7,15 @@ M2: PyQt6 Image Display & Navigation - Canvas for displaying and manipulating im
 from pathlib import Path
 from typing import Optional
 
-from PyQt6.QtCore import QPoint, QPointF, Qt, pyqtSignal
-from PyQt6.QtGui import QPainter, QPixmap, QWheelEvent
-from PyQt6.QtWidgets import QGraphicsPixmapItem, QGraphicsScene, QGraphicsView, QWidget
+from PyQt6.QtCore import QPoint, QPointF, QRectF, Qt, pyqtSignal
+from PyQt6.QtGui import QBrush, QColor, QPainter, QPen, QPixmap, QWheelEvent
+from PyQt6.QtWidgets import (
+    QGraphicsPixmapItem,
+    QGraphicsRectItem,
+    QGraphicsScene,
+    QGraphicsView,
+    QWidget,
+)
 
 
 class ImageCanvas(QGraphicsView):
@@ -51,6 +57,9 @@ class ImageCanvas(QGraphicsView):
         self.zoom_factor = 1.15
         self.min_zoom = 0.1
         self.max_zoom = 10.0
+
+        # Annotation overlay
+        self._annotation_items: list = []
 
         # Setup the canvas
         self._setup_canvas()
@@ -262,3 +271,77 @@ class ImageCanvas(QGraphicsView):
         viewport_point = self.mapFromScene(scene_point)
 
         return viewport_point
+
+    def display_annotations(
+        self,
+        boxes: list[tuple[int, int, int, int]],
+        labels: list[str],
+        scores: Optional[list[float]] = None,
+        color: QColor = QColor(0, 255, 0, 128),
+    ) -> None:
+        """
+        Display bounding box annotations on the image.
+
+        Args:
+            boxes: List of bounding boxes [(x1, y1, x2, y2), ...]
+            labels: List of label strings for each box
+            scores: Optional confidence scores for each box
+            color: Color for the bounding boxes (default: semi-transparent green)
+        """
+        # Clear existing annotations
+        self.clear_annotations()
+
+        if not self.current_pixmap_item:
+            return
+
+        # Create graphics items for each bounding box
+        for i, ((x1, y1, x2, y2), label) in enumerate(zip(boxes, labels)):
+            # Create rectangle
+            rect = QRectF(x1, y1, x2 - x1, y2 - y1)
+            rect_item = QGraphicsRectItem(rect)
+
+            # Set pen (border)
+            pen = QPen(color)
+            pen.setWidth(2)
+            rect_item.setPen(pen)
+
+            # Set semi-transparent fill
+            brush = QBrush(QColor(color.red(), color.green(), color.blue(), 50))
+            rect_item.setBrush(brush)
+
+            # Add to scene as child of pixmap item
+            rect_item.setParentItem(self.current_pixmap_item)
+
+            # Store reference
+            self._annotation_items.append(rect_item)
+
+            # TODO: Add label text (will implement with QGraphicsTextItem)
+
+    def clear_annotations(self) -> None:
+        """Clear all annotation overlays from the canvas."""
+        for item in self._annotation_items:
+            if item.scene():
+                self._scene.removeItem(item)
+
+        self._annotation_items.clear()
+
+    def display_masks(
+        self,
+        masks: list,
+        color: QColor = QColor(255, 0, 0, 100),
+    ) -> None:
+        """
+        Display segmentation masks on the image.
+
+        Args:
+            masks: List of binary masks (numpy arrays)
+            color: Color for the mask overlay
+        """
+        # Clear existing annotations
+        self.clear_annotations()
+
+        if not self.current_pixmap_item:
+            return
+
+        # TODO: Convert masks to QPixmap and overlay
+        # This will be implemented when needed for mask visualization

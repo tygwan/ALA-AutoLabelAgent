@@ -9,6 +9,7 @@ from typing import Optional
 import numpy as np
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
+    QComboBox,
     QDialog,
     QHBoxLayout,
     QLabel,
@@ -76,6 +77,22 @@ class AutoAnnotateDialog(QDialog):
     def _create_ui(self) -> None:
         """Create dialog UI components."""
         layout = QVBoxLayout()
+
+        # Model selection dropdown
+        model_layout = QHBoxLayout()
+        model_label = QLabel("Model:")
+        self.model_selector = QComboBox()
+        self.model_selector.addItems(
+            [
+                "Florence-2 + SAM2 (Best Quality)",
+                "Florence-2 Only (Fast)",
+                "SAM2 Only (Manual Prompts)",
+            ]
+        )
+        self.model_selector.setCurrentIndex(0)
+        model_layout.addWidget(model_label)
+        model_layout.addWidget(self.model_selector)
+        layout.addLayout(model_layout)
 
         # Text prompt input
         prompt_layout = QHBoxLayout()
