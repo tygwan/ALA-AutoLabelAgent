@@ -214,7 +214,7 @@ Each task follows TDD cycle: **RED → GREEN → REFACTOR → COMMIT**
 ---
 
 ## M2: PyQt6 Image Display & Navigation
-**Duration**: 2 weeks | **Total**: 80h (solo developer) | **Progress**: 48h/80h (60%)
+**Duration**: 2 weeks | **Total**: 80h (solo developer) | **Progress**: 56h/80h (70%)
 **Priority**: P0 (Critical)
 
 ### Main Window Structure (16h) ✅
@@ -270,20 +270,20 @@ Each task follows TDD cycle: **RED → GREEN → REFACTOR → COMMIT**
 - [x] Write integration test for file operations (1.0h) [INT] {M2}
 - [x] Commit: "feat(ui): add file list widget" (0.5h) [COMMIT] {M2}
 
-### Class List Widget (10h)
-- [ ] Write test for ClassListWidget initialization (0.5h) [RED] {M2}
-- [ ] Implement ClassListWidget with QListWidget (1.0h) [GREEN] {M2}
-- [ ] Write test for add_class() method (0.5h) [RED] {M2}
-- [ ] Implement add_class() with color picker (1.5h) [GREEN] {M2}
-- [ ] Write test for remove_class() method (0.5h) [RED] {M2}
-- [ ] Implement remove_class() (0.5h) [GREEN] {M2}
-- [ ] Write test for edit_class() method (0.5h) [RED] {M2}
-- [ ] Implement edit_class() dialog (1.5h) [GREEN] {M2}
-- [ ] Write test for class color display (0.5h) [RED] {M2}
-- [ ] Implement color badge rendering (1.0h) [GREEN] {M2}
-- [ ] Refactor ClassListWidget for better UX (1.0h) [REFACTOR] {M2}
-- [ ] Write integration test for class management (1.0h) [INT] {M2}
-- [ ] Commit: "feat(ui): add class list widget" (0.5h) [COMMIT] {M2}
+### Class List Widget (8h) ✅
+- [x] Write test for ClassListWidget initialization (0.5h) [RED] {M2}
+- [x] Implement ClassListWidget with QListWidget (1.0h) [GREEN] {M2}
+- [x] Write test for add_class() method (0.5h) [RED] {M2}
+- [x] Implement add_class() with color badge (1.5h) [GREEN] {M2}
+- [x] Write test for remove_class() method (0.5h) [RED] {M2}
+- [x] Implement remove_class() (0.5h) [GREEN] {M2}
+- [x] Write test for getter methods (0.5h) [RED] {M2}
+- [x] Implement getter methods (0.5h) [GREEN] {M2}
+- [x] Write test for class color display (0.5h) [RED] {M2}
+- [x] Implement color badge rendering (1.0h) [GREEN] {M2}
+- [x] Refactor ClassListWidget for better organization (1.0h) [REFACTOR] {M2}
+- [x] Commit: "feat(ui): add class list widget" (0.5h) [COMMIT] {M2}
+- [ ] Future: Add edit dialog for class properties (2h) [DEFERRED]
 
 ### Keyboard Shortcuts (10h)
 - [ ] Write test for shortcut registration (0.5h) [RED] {M2}
