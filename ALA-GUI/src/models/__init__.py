@@ -10,6 +10,7 @@ from models.class_definition import ClassDefinition
 from models.image import Image
 from models.model_inference_engine import ModelInferenceEngine
 from models.project import Project
+from models.sam2_model import SAM2Model
 
 __all__ = [
     "Annotation",
@@ -18,4 +19,5 @@ __all__ = [
     "Image",
     "ModelInferenceEngine",
     "Project",
+    "SAM2Model",
 ]
