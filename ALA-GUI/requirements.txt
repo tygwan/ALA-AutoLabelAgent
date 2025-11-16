@@ -1,5 +1,6 @@
 # ALA-GUI Requirements
-# Python 3.9+
+# Python 3.9+ (Florence-2 only)
+# Python 3.10+ (Florence-2 + SAM2 segmentation)
 
 # PyQt6 - GUI Framework
 PyQt6==6.6.1

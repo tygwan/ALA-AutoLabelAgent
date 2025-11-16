@@ -2,11 +2,18 @@
 
 This guide explains how to download and setup AI models for ALA-GUI auto-annotation.
 
+## Python Version Requirements
+
+- **Python 3.9+**: Florence-2 object detection (bounding boxes)
+- **Python 3.10+**: Florence-2 + SAM2 segmentation (refined masks)
+
+**Note**: SAM2 requires Python 3.10 or higher. If you're using Python 3.9, you can still use Florence-2 for bounding box detection. The program will automatically fall back to simple box masks.
+
 ## Quick Start
 
 ALA-GUI uses two types of models:
-1. **VLM (Visual Language Model)** - For object detection (e.g., Florence-2)
-2. **Segmentation Model** - For mask refinement (e.g., SAM2)
+1. **VLM (Visual Language Model)** - For object detection (e.g., Florence-2) - **Required**
+2. **Segmentation Model** - For mask refinement (e.g., SAM2) - **Optional** (Python 3.10+ only)
 
 ## Model Directory Structure
 
@@ -207,6 +214,35 @@ Select "Florence-2-large-no-flash (HF)" from the VLM Model dropdown - this varia
 - This works on ALL hardware: old GPUs, new GPUs, CPU, MPS
 - No performance penalty for most use cases
 - flash_attn only helps on Ampere+ GPUs with large batch sizes
+
+### "SAM2 requires Python >= 3.10.0" Error
+
+If you see: `"ERROR: Package 'sam-2' requires a different Python: 3.9.x not in '>=3.10.0'"`
+
+**Solution 1: Use Florence-2 Only Mode (Recommended for Python 3.9)**
+
+1. Select "None (VLM only)" from the Seg Model dropdown
+2. This uses Florence-2 for bounding box detection only
+3. Simple box masks will be created instead of refined SAM2 masks
+4. Works perfectly for most use cases
+
+**Solution 2: Upgrade Python to 3.10+**
+
+```bash
+# Check current Python version
+python --version
+
+# Install Python 3.10+ from python.org
+# Then recreate your virtual environment
+python3.10 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r ALA-GUI/requirements.txt
+```
+
+**Why This Happens**:
+- SAM2 repository requires Python 3.10.0 or higher
+- Florence-2 works fine with Python 3.9+
+- ALA-GUI automatically falls back to box masks when SAM2 is unavailable
 
 ### Model downloads are slow
 - Use manual download methods (wget, browser)

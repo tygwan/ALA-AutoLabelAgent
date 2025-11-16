@@ -103,33 +103,53 @@ class ModelController(QObject):
         device: str = "cpu",
     ) -> None:
         """
-        Load both Florence-2 and SAM2 models.
+        Load Florence-2 and optionally SAM2 models.
 
         Args:
             florence_path: Path to Florence-2 checkpoint
-            sam_path: Path to SAM2 checkpoint
+            sam_path: Path to SAM2 checkpoint (optional, can be empty)
             device: Device to load models on ("cpu", "cuda", "mps")
 
         Raises:
-            RuntimeError: If model loading fails
+            RuntimeError: If Florence-2 model loading fails
+
+        Note:
+            SAM2 is optional. If loading fails (e.g., Python < 3.10),
+            Florence-2 will still work for bounding box detection.
         """
         self.progress.emit(0, "Loading models...")
 
         try:
-            # Load Florence-2
+            # Load Florence-2 (required)
             self.progress.emit(10, "Loading Florence-2...")
             self.florence2_model.load_model(florence_path, device=device)
 
-            # Load SAM2
-            self.progress.emit(50, "Loading SAM2...")
-            self.sam2_model.load_model(sam_path, device=device)
+            # Load SAM2 (optional)
+            if sam_path:
+                try:
+                    self.progress.emit(50, "Loading SAM2...")
+                    self.sam2_model.load_model(sam_path, device=device)
+                    self.progress.emit(100, "All models loaded successfully")
+                except Exception as sam_error:
+                    # SAM2 failed but Florence-2 works
+                    warning_msg = f"SAM2 loading failed: {str(sam_error)}"
+                    error_preview = str(sam_error)[:45]
+                    self.progress.emit(
+                        100,
+                        f"Florence-2 loaded (SAM2 unavailable: {error_preview}...)",
+                    )
+                    # Emit warning but don't fail
+                    import sys
+
+                    print(f"Warning: {warning_msg}", file=sys.stderr)
+            else:
+                self.progress.emit(100, "Florence-2 loaded (SAM2 not selected)")
 
             self._models_loaded = True
-            self.progress.emit(100, "Models loaded successfully")
 
         except Exception as e:
             self._models_loaded = False
-            error_msg = f"Failed to load models: {str(e)}"
+            error_msg = f"Failed to load Florence-2 model: {str(e)}"
             self.error.emit(error_msg)
             raise RuntimeError(error_msg) from e
 
@@ -141,7 +161,7 @@ class ModelController(QObject):
         use_cache: bool = True,
     ) -> Optional[Dict[str, Any]]:
         """
-        Run auto-annotation workflow: Florence-2 detection → SAM2 segmentation.
+        Run auto-annotation workflow: Florence-2 detection → optional SAM2 segmentation.
 
         Args:
             image: Input image (H, W, 3) in RGB format
@@ -152,27 +172,28 @@ class ModelController(QObject):
         Returns:
             Dictionary containing:
                 - detections: Florence-2 detection results (boxes, labels, scores)
-                - masks: SAM2 segmentation masks for each detection
-                - metadata: Additional information (prompt, confidence, etc.)
+                - masks: SAM2 segmentation masks (if SAM2 loaded), else simple box masks
+                - metadata: Additional information (prompt, confidence, sam2_used, etc.)
 
         Raises:
-            RuntimeError: If models are not loaded or inference fails
+            RuntimeError: If Florence-2 model is not loaded or inference fails
+
+        Note:
+            If SAM2 is not loaded, bounding boxes are returned without refined masks.
         """
         # Check if cancelled
         if self._is_cancelled:
             self.progress.emit(0, "Operation cancelled")
             return None
 
-        # Check if models are loaded
+        # Check if Florence-2 is loaded (required)
         if not self.florence2_model.is_model_loaded():
             error_msg = "Florence-2 model not loaded. Call load_models() first."
             self.error.emit(error_msg)
             raise RuntimeError(error_msg)
 
-        if not self.sam2_model.is_model_loaded():
-            error_msg = "SAM2 model not loaded. Call load_models() first."
-            self.error.emit(error_msg)
-            raise RuntimeError(error_msg)
+        # SAM2 is optional - check if available
+        sam2_available = self.sam2_model.is_model_loaded()
 
         # Check cache
         if use_cache:
@@ -195,24 +216,31 @@ class ModelController(QObject):
             if self._is_cancelled:
                 return None
 
-            # Step 2: SAM2 segmentation for each detection
-            self.progress.emit(50, "Refining masks with SAM2...")
-            masks = []
-
             boxes = detections["boxes"]
-            for i, box in enumerate(boxes):
-                if self._is_cancelled:
-                    return None
 
-                # Update progress
-                progress_pct = 50 + int((i / len(boxes)) * 40)
-                self.progress.emit(
-                    progress_pct, f"Segmenting object {i+1}/{len(boxes)}..."
-                )
+            # Step 2: Mask generation (SAM2 if available, else simple box masks)
+            if sam2_available:
+                self.progress.emit(50, "Refining masks with SAM2...")
+                masks = []
 
-                # Run SAM2 with box prompt
-                sam_result = self.sam2_model.predict(image, box=box)
-                masks.append(sam_result["masks"][0])
+                for i, box in enumerate(boxes):
+                    if self._is_cancelled:
+                        return None
+
+                    # Update progress
+                    progress_pct = 50 + int((i / len(boxes)) * 40)
+                    self.progress.emit(
+                        progress_pct, f"Segmenting object {i+1}/{len(boxes)}..."
+                    )
+
+                    # Run SAM2 with box prompt
+                    sam_result = self.sam2_model.predict(image, box=box)
+                    masks.append(sam_result["masks"][0])
+            else:
+                # Use simple box masks (Florence-2 only mode)
+                self.progress.emit(50, "Creating bounding box masks...")
+                h, w = image.shape[:2]
+                masks = self.florence2_model.bbox_to_mask(boxes, (h, w))
 
             # Combine results
             result = {
@@ -222,6 +250,7 @@ class ModelController(QObject):
                     "text_prompt": text_prompt,
                     "confidence_threshold": confidence_threshold,
                     "num_detections": len(boxes),
+                    "sam2_used": sam2_available,
                 },
             }
 
