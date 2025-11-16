@@ -24,12 +24,24 @@ Recommended structure:
 
 ## Method 1: Auto-Download (Recommended)
 
+### Dependencies First
+
+Install required dependencies before first use:
+```bash
+pip install timm einops
+```
+
+Note: `flash_attn` is **NOT required** - ALA-GUI uses standard attention for maximum compatibility.
+
 ### Florence-2 (Automatic from HuggingFace)
 
 1. Open Auto-Annotate dialog
-2. Select "Florence-2-large (HF)" or "Florence-2-base (HF)" from VLM Model dropdown
+2. Select a Florence-2 model from VLM Model dropdown:
+   - **Florence-2-large (HF)**: Best quality (~1.5GB)
+   - **Florence-2-base (HF)**: Faster, good quality (~500MB)
+   - **Florence-2-large-no-flash (HF)**: Explicit no-flash variant (~1.5GB)
 3. Click "Run Auto-Annotation"
-4. Model will download automatically (~1.5GB for large, ~500MB for base)
+4. Model will download automatically on first use
 
 ### SAM2 (Automatic Download)
 
@@ -169,6 +181,32 @@ pip install -e .
 - Ensure transformers is installed: `pip install transformers`
 - Check internet connection (for HuggingFace downloads)
 - Verify disk space (~2-5GB free)
+
+### "flash_attn, timm, einops required" Error
+
+If you see: `"this modeling file requires the following packages that were not found in your environment: flash_attn, timm, einops"`
+
+**Solution 1: Install Required Dependencies (Recommended)**
+```bash
+pip install timm einops
+```
+
+**About flash_attn**: ALA-GUI uses `attn_implementation="eager"` which does **NOT** require flash_attn. The error message is misleading - flash_attn is optional.
+
+**Flash Attention GPU Requirements** (if you want to install it):
+- **FlashAttention 2**: Compute Capability 8.0+ (Ampere: A100, RTX 3090, RTX 4090)
+- **FlashAttention 1**: Compute Capability 7.5+ (Turing: T4, RTX 2080)
+- **NOT supported**: V100 or older GPUs, CPU, Apple Silicon (MPS)
+
+**Solution 2: Use No-Flash-Attn Model Variant**
+
+Select "Florence-2-large-no-flash (HF)" from the VLM Model dropdown - this variant explicitly removes flash_attn dependency.
+
+**Why This Works**:
+- ALA-GUI configures Florence-2 with standard attention (`attn_implementation="eager"`)
+- This works on ALL hardware: old GPUs, new GPUs, CPU, MPS
+- No performance penalty for most use cases
+- flash_attn only helps on Ampere+ GPUs with large batch sizes
 
 ### Model downloads are slow
 - Use manual download methods (wget, browser)

@@ -86,9 +86,12 @@ class Florence2Model(ModelInferenceEngine):
 
             self._emit_progress(60, "Loading model weights...")
 
-            # Load model
+            # Load model with eager attention (no flash_attn required)
+            # This ensures compatibility across all GPU architectures and CPU
             self.model = AutoModelForCausalLM.from_pretrained(
-                model_path, trust_remote_code=True
+                model_path,
+                trust_remote_code=True,
+                attn_implementation="eager",  # Use standard attention, not flash_attn
             )
 
             # Move to device

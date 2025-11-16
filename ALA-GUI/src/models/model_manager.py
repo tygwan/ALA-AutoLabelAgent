@@ -112,9 +112,15 @@ class ModelManager:
     def _add_huggingface_models(self) -> None:
         """Add HuggingFace Hub models as download options."""
         # Florence-2 models from HuggingFace
+        # Note: Standard models work with attn_implementation="eager"
+        # No-flash-attn variants are available for compatibility
         hf_florence_models = [
             ("Florence-2-large (HF)", "microsoft/Florence-2-large"),
             ("Florence-2-base (HF)", "microsoft/Florence-2-base"),
+            (
+                "Florence-2-large-no-flash (HF)",
+                "multimodalart/Florence-2-large-no-flash-attn",
+            ),
         ]
 
         for name, hf_id in hf_florence_models:
