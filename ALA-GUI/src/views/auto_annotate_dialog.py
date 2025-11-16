@@ -63,7 +63,10 @@ class AutoAnnotateDialog(QDialog):
         self.setWindowTitle("Auto-Annotate with AI Models")
         self.setMinimumWidth(500)
 
-        # Initialize model controller
+        # Create UI first (so progress bar exists)
+        self._create_ui()
+
+        # Initialize model controller (will auto-load models)
         self.model_controller = ModelController(parent=self)
 
         # Connect model signals
@@ -71,12 +74,14 @@ class AutoAnnotateDialog(QDialog):
         self.model_controller.autodistill_complete.connect(self._on_annotation_complete)
         self.model_controller.error.connect(self._on_error)
 
-        # Create UI
-        self._create_ui()
+        # Disable Run button until models are loaded
+        self.run_button.setEnabled(False)
+        self.progress_label.setText("Loading models, please wait...")
 
         # State
         self._current_image: Optional[np.ndarray] = None
         self._current_results: Optional[dict] = None
+        self._models_loading = True
 
     def _create_ui(self) -> None:
         """Create dialog UI components."""
@@ -198,6 +203,16 @@ class AutoAnnotateDialog(QDialog):
         self.progress_bar.setValue(percentage)
         self.progress_label.setText(message)
 
+        # Enable Run button when models are fully loaded
+        if self._models_loading and percentage == 100:
+            if "loaded successfully" in message.lower():
+                self._models_loading = False
+                self.run_button.setEnabled(True)
+                self.progress_bar.setValue(0)
+                self.progress_label.setText(
+                    "Models ready. Enter classes and click Run."
+                )
+
     def run_annotation(self) -> None:
         """
         Run auto-annotation on current image.
@@ -272,8 +287,25 @@ class AutoAnnotateDialog(QDialog):
         Args:
             error_msg: Error message
         """
+        from PyQt6.QtWidgets import QMessageBox
+
         self.progress_label.setText(f"Error: {error_msg}")
         self._reset_buttons()
+
+        # Show error dialog for model loading errors
+        if self._models_loading and "Auto-load failed" in error_msg:
+            QMessageBox.critical(
+                self,
+                "Model Loading Failed",
+                f"Failed to load AI models:\n\n{error_msg}\n\n"
+                "This may be due to:\n"
+                "- Network connection issues\n"
+                "- Insufficient disk space (~2-5GB required)\n"
+                "- Missing dependencies (PyTorch, transformers)\n\n"
+                "Please check your setup and try again.",
+            )
+            self._models_loading = False
+            self.run_button.setEnabled(False)
 
     def accept_results(self) -> None:
         """Accept annotation results and close dialog."""
