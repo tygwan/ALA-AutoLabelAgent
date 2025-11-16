@@ -51,9 +51,12 @@ ALA-GUI/
 
 ### Prerequisites
 
-- Python 3.9+
+- **Python 3.10+** (Recommended - full SAM2 segmentation support)
+- **Python 3.9+** (Basic - Florence-2 bounding boxes only)
 - Windows 10/11 (Linux/macOS support planned)
 - CUDA-capable GPU (recommended for model inference)
+
+**Note**: SAM2 segmentation requires Python 3.10+. If using Python 3.9, only Florence-2 bounding box detection is available. See [Python Upgrade Guide](docs/PYTHON_UPGRADE.md) to upgrade from 3.9 to 3.10.
 
 ### Setup
 
@@ -61,16 +64,29 @@ ALA-GUI/
 # Clone the repository
 cd ALA-AutoLabelAgent/ALA-GUI
 
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# Create virtual environment (Python 3.10 recommended)
+py -3.10 -m venv venv  # Windows with Python 3.10
+# OR
+python -m venv venv    # Use default Python
+
+# Activate virtual environment
+venv\Scripts\activate  # Windows
+# source venv/bin/activate  # Linux/macOS
+
+# Upgrade pip
+python -m pip install --upgrade pip
 
 # Install dependencies
 pip install -r requirements.txt
 
-# Run the application (coming soon)
+# Install Florence-2 dependencies
+pip install timm einops
+
+# Run the application
 python src/main.py
 ```
+
+**For Python 3.9 → 3.10 upgrade**, see [docs/PYTHON_UPGRADE.md](docs/PYTHON_UPGRADE.md)
 
 ## Development Status
 
