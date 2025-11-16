@@ -80,18 +80,22 @@ class MainWindow(QMainWindow):
         self.new_action = QAction("&New Project...", self)
         self.new_action.setShortcut("Ctrl+N")
         self.new_action.setStatusTip("Create a new project")
+        self.new_action.triggered.connect(self._handle_new_project)
 
         self.open_action = QAction("&Open Project...", self)
         self.open_action.setShortcut("Ctrl+O")
         self.open_action.setStatusTip("Open an existing project")
+        self.open_action.triggered.connect(self._handle_open_project)
 
         self.save_action = QAction("&Save Project", self)
         self.save_action.setShortcut("Ctrl+S")
         self.save_action.setStatusTip("Save the current project")
+        self.save_action.triggered.connect(self._handle_save_project)
 
         self.import_action = QAction("&Import Images...", self)
         self.import_action.setShortcut("Ctrl+I")
         self.import_action.setStatusTip("Import images to the project")
+        self.import_action.triggered.connect(self._handle_import_images)
 
         self.export_action = QAction("&Export Annotations...", self)
         self.export_action.setShortcut("Ctrl+E")
@@ -134,10 +138,12 @@ class MainWindow(QMainWindow):
         self.prev_action = QAction("&Previous Image", self)
         self.prev_action.setShortcut("Left")
         self.prev_action.setStatusTip("Go to previous image")
+        self.prev_action.triggered.connect(self._handle_previous_image)
 
         self.next_action = QAction("&Next Image", self)
         self.next_action.setShortcut("Right")
         self.next_action.setStatusTip("Go to next image")
+        self.next_action.triggered.connect(self._handle_next_image)
 
         # Tools actions
         self.auto_annotate_action = QAction("&Auto-Annotate...", self)
@@ -599,3 +605,45 @@ class MainWindow(QMainWindow):
         dialog.set_image_path(self.image_canvas.current_image)
 
         dialog.exec()
+
+    # File menu handlers
+    def _handle_import_images(self) -> None:
+        """Handle import images action."""
+        from PyQt6.QtWidgets import QFileDialog
+
+        file_paths, _ = QFileDialog.getOpenFileNames(
+            self,
+            "Import Images",
+            "",
+            "Images (*.png *.jpg *.jpeg *.bmp);;All Files (*)",
+        )
+
+        if file_paths:
+            for path in file_paths:
+                self.file_list_widget.add_image(path)
+            self.statusBar().showMessage(f"Imported {len(file_paths)} image(s)", 3000)
+
+    def _handle_new_project(self) -> None:
+        """Handle new project action."""
+        self.statusBar().showMessage("New project (not yet implemented)", 3000)
+
+    def _handle_open_project(self) -> None:
+        """Handle open project action."""
+        self.statusBar().showMessage("Open project (not yet implemented)", 3000)
+
+    def _handle_save_project(self) -> None:
+        """Handle save project action."""
+        self.statusBar().showMessage("Save project (not yet implemented)", 3000)
+
+    # Navigation handlers
+    def _handle_previous_image(self) -> None:
+        """Handle previous image navigation."""
+        if hasattr(self, "file_list_widget"):
+            if not self.file_list_widget.select_previous_image():
+                self.statusBar().showMessage("Already at first image", 2000)
+
+    def _handle_next_image(self) -> None:
+        """Handle next image navigation."""
+        if hasattr(self, "file_list_widget"):
+            if not self.file_list_widget.select_next_image():
+                self.statusBar().showMessage("Already at last image", 2000)

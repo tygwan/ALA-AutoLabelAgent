@@ -152,6 +152,32 @@ class FileListWidget(QListWidget):
         path = current_item.data(Qt.ItemDataRole.UserRole)
         return path
 
+    def select_previous_image(self) -> bool:
+        """
+        Select the previous image in the list.
+
+        Returns:
+            True if selection changed, False if already at first image
+        """
+        current_row = self.currentRow()
+        if current_row > 0:
+            self.setCurrentRow(current_row - 1)
+            return True
+        return False
+
+    def select_next_image(self) -> bool:
+        """
+        Select the next image in the list.
+
+        Returns:
+            True if selection changed, False if already at last image
+        """
+        current_row = self.currentRow()
+        if current_row < self.count() - 1:
+            self.setCurrentRow(current_row + 1)
+            return True
+        return False
+
     def _get_cache_key(self, image_path: str) -> str:
         """
         Generate a cache key for an image path.
