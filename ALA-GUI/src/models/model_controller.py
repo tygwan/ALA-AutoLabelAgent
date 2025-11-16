@@ -41,14 +41,37 @@ class ModelController(QObject):
     autodistill_complete = pyqtSignal(object)  # results
     cancelled = pyqtSignal()  # cancellation notification
 
-    def __init__(self, parent: Optional[QObject] = None) -> None:
+    def __init__(
+        self,
+        parent: Optional[QObject] = None,
+        auto_load: bool = True,
+        florence_path: str = "microsoft/Florence-2-large",
+        sam_path: str = "",
+        device: Optional[str] = None,
+    ) -> None:
         """
         Initialize ModelController.
 
         Args:
             parent: Parent QObject (optional)
+            auto_load: Automatically load models on initialization (default: True)
+            florence_path: Path to Florence-2 checkpoint (default: huggingface model)
+            sam_path: Path to SAM2 checkpoint (default: auto-download)
+            device: Device to load models on ("cpu", "cuda", "mps").
+                   If None, automatically detects best available device.
         """
         super().__init__(parent)
+
+        # Auto-detect device if not specified
+        if device is None:
+            import torch
+
+            if torch.cuda.is_available():
+                device = "cuda"
+            elif torch.backends.mps.is_available():
+                device = "mps"
+            else:
+                device = "cpu"
 
         # Initialize models
         self.florence2_model = Florence2Model(parent=self)
@@ -63,6 +86,15 @@ class ModelController(QObject):
         # State
         self._is_cancelled = False
         self._cache: Dict[str, Any] = {}
+        self._models_loaded = False
+
+        # Auto-load models if requested
+        if auto_load:
+            try:
+                self.load_models(florence_path, sam_path, device)
+            except Exception as e:
+                # Don't fail initialization, just emit error
+                self.error.emit(f"Auto-load failed: {str(e)}")
 
     def load_models(
         self,
@@ -92,9 +124,11 @@ class ModelController(QObject):
             self.progress.emit(50, "Loading SAM2...")
             self.sam2_model.load_model(sam_path, device=device)
 
+            self._models_loaded = True
             self.progress.emit(100, "Models loaded successfully")
 
         except Exception as e:
+            self._models_loaded = False
             error_msg = f"Failed to load models: {str(e)}"
             self.error.emit(error_msg)
             raise RuntimeError(error_msg) from e
