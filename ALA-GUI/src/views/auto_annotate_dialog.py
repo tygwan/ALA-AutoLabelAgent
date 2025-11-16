@@ -20,6 +20,7 @@ from PyQt6.QtWidgets import (
 )
 
 from models.model_controller import ModelController
+from models.model_manager import ModelManager
 from widgets.results_preview_widget import ResultsPreviewWidget
 
 
@@ -61,47 +62,55 @@ class AutoAnnotateDialog(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle("Auto-Annotate with AI Models")
-        self.setMinimumWidth(500)
+        self.setMinimumWidth(600)
+
+        # Initialize model manager
+        self.model_manager = ModelManager()
 
         # Create UI first (so progress bar exists)
         self._create_ui()
 
-        # Initialize model controller (will auto-load models)
-        self.model_controller = ModelController(parent=self)
+        # Initialize model controller (without auto-loading)
+        self.model_controller = ModelController(parent=self, auto_load=False)
 
         # Connect model signals
         self.model_controller.progress.connect(self.update_progress)
         self.model_controller.autodistill_complete.connect(self._on_annotation_complete)
         self.model_controller.error.connect(self._on_error)
 
-        # Disable Run button until models are loaded
-        self.run_button.setEnabled(False)
-        self.progress_label.setText("Loading models, please wait...")
-
         # State
         self._current_image: Optional[np.ndarray] = None
         self._current_results: Optional[dict] = None
-        self._models_loading = True
+        self._models_loaded = False
+
+        # Populate model lists
+        self._populate_model_lists()
 
     def _create_ui(self) -> None:
         """Create dialog UI components."""
         layout = QVBoxLayout()
 
-        # Model selection dropdown
-        model_layout = QHBoxLayout()
-        model_label = QLabel("Model:")
-        self.model_selector = QComboBox()
-        self.model_selector.addItems(
-            [
-                "Florence-2 + SAM2 (Best Quality)",
-                "Florence-2 Only (Fast)",
-                "SAM2 Only (Manual Prompts)",
-            ]
+        # VLM Model selection
+        vlm_layout = QHBoxLayout()
+        vlm_label = QLabel("VLM Model:")
+        self.vlm_selector = QComboBox()
+        self.vlm_selector.setToolTip(
+            "Visual Language Model for object detection (e.g., Florence-2)"
         )
-        self.model_selector.setCurrentIndex(0)
-        model_layout.addWidget(model_label)
-        model_layout.addWidget(self.model_selector)
-        layout.addLayout(model_layout)
+        vlm_layout.addWidget(vlm_label)
+        vlm_layout.addWidget(self.vlm_selector, 1)
+        layout.addLayout(vlm_layout)
+
+        # Segmentation Model selection
+        seg_layout = QHBoxLayout()
+        seg_label = QLabel("Seg Model:")
+        self.seg_selector = QComboBox()
+        self.seg_selector.setToolTip(
+            "Segmentation Model for refining masks (e.g., SAM2)"
+        )
+        seg_layout.addWidget(seg_label)
+        seg_layout.addWidget(self.seg_selector, 1)
+        layout.addLayout(seg_layout)
 
         # Text prompt input
         prompt_layout = QHBoxLayout()
@@ -203,16 +212,6 @@ class AutoAnnotateDialog(QDialog):
         self.progress_bar.setValue(percentage)
         self.progress_label.setText(message)
 
-        # Enable Run button when models are fully loaded
-        if self._models_loading and percentage == 100:
-            if "loaded successfully" in message.lower():
-                self._models_loading = False
-                self.run_button.setEnabled(True)
-                self.progress_bar.setValue(0)
-                self.progress_label.setText(
-                    "Models ready. Enter classes and click Run."
-                )
-
     def run_annotation(self) -> None:
         """
         Run auto-annotation on current image.
@@ -229,15 +228,48 @@ class AutoAnnotateDialog(QDialog):
             self._on_error("Please enter object classes to detect.")
             return
 
+        # Get selected models
+        vlm_path = self.vlm_selector.currentData()
+        seg_path = self.seg_selector.currentData()
+
+        if vlm_path is None:
+            self._on_error("Please select a valid VLM model.")
+            return
+
         # Disable run button, enable cancel
         self.run_button.setEnabled(False)
         self.cancel_button.setEnabled(True)
 
         # Reset progress
         self.progress_bar.setValue(0)
-        self.progress_label.setText("Starting...")
+        self.progress_label.setText("Loading models...")
+
+        # Load models if not already loaded
+        if not self._models_loaded:
+            try:
+                # Auto-detect device
+                import torch
+
+                device = (
+                    "cuda"
+                    if torch.cuda.is_available()
+                    else "mps" if torch.backends.mps.is_available() else "cpu"
+                )
+
+                # Load models
+                self.model_controller.load_models(
+                    florence_path=vlm_path,
+                    sam_path=seg_path if seg_path else "",
+                    device=device,
+                )
+                self._models_loaded = True
+            except Exception as e:
+                self._on_error(f"Failed to load models: {str(e)}")
+                self._reset_buttons()
+                return
 
         # Run autodistill
+        self.progress_label.setText("Running inference...")
         try:
             self.model_controller.run_autodistill(
                 self._current_image,
@@ -293,19 +325,18 @@ class AutoAnnotateDialog(QDialog):
         self._reset_buttons()
 
         # Show error dialog for model loading errors
-        if self._models_loading and "Auto-load failed" in error_msg:
+        if "Failed to load models" in error_msg:
             QMessageBox.critical(
                 self,
                 "Model Loading Failed",
                 f"Failed to load AI models:\n\n{error_msg}\n\n"
                 "This may be due to:\n"
-                "- Network connection issues\n"
+                "- Invalid model path\n"
+                "- Network connection issues (for HuggingFace models)\n"
                 "- Insufficient disk space (~2-5GB required)\n"
                 "- Missing dependencies (PyTorch, transformers)\n\n"
-                "Please check your setup and try again.",
+                "Please check your model directory and setup.",
             )
-            self._models_loading = False
-            self.run_button.setEnabled(False)
 
     def accept_results(self) -> None:
         """Accept annotation results and close dialog."""
@@ -351,3 +382,38 @@ class AutoAnnotateDialog(QDialog):
         """Reset button states."""
         self.run_button.setEnabled(True)
         self.cancel_button.setEnabled(False)
+
+    def _populate_model_lists(self) -> None:
+        """Populate VLM and Segmentation model dropdown lists."""
+        # Clear existing items
+        self.vlm_selector.clear()
+        self.seg_selector.clear()
+
+        # Get available models
+        vlm_models = self.model_manager.get_vlm_models()
+        seg_models = self.model_manager.get_segmentation_models()
+
+        # Populate VLM models
+        if vlm_models:
+            for model in vlm_models:
+                size_info = f" (~{model.size_mb:.0f}MB)" if model.size_mb else ""
+                self.vlm_selector.addItem(f"{model.name}{size_info}", model.path)
+        else:
+            self.vlm_selector.addItem("No VLM models found", None)
+            self.progress_label.setText(
+                f"⚠️ No models found in {self.model_manager.get_model_directory()}"
+            )
+
+        # Populate Segmentation models
+        if seg_models:
+            for model in seg_models:
+                size_info = f" (~{model.size_mb:.0f}MB)" if model.size_mb else ""
+                self.seg_selector.addItem(f"{model.name}{size_info}", model.path)
+            # Add "None" option for Florence-2 only mode
+            self.seg_selector.addItem("None (VLM only)", None)
+        else:
+            self.seg_selector.addItem("No segmentation models found", None)
+
+        # Show model directory path
+        model_dir = self.model_manager.get_model_directory()
+        self.progress_label.setText(f"Models directory: {model_dir}\nReady to annotate")
