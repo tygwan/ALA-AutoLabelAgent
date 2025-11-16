@@ -8,17 +8,40 @@ ALA-GUI transforms the ALA (Auto Label Agent) pipeline into a user-friendly desk
 
 ## Features
 
-### Current (v1.0 MVP - In Development)
+### ✅ Implemented (v0.3.0-alpha)
 
 - 🖼️ **Interactive Image Viewer**: PyQt6-based canvas with zoom, pan, and navigation
-- 🤖 **Auto-Annotation**: SAM2 + Florence-2 integration for text-prompt-based segmentation
+  - File list management with Previous/Next navigation
+  - Image display with zoom controls
+  - Keyboard shortcuts (Ctrl+O, Ctrl+A, Arrow keys)
+- 🤖 **Auto-Annotation**: Florence-2 + SAM2 integration for AI-powered segmentation
+  - Text-prompt-based object detection with Florence-2 VLM
+  - Refined mask generation with SAM2 segmentation
+  - Manual model selection (VLM + Segmentation dropdowns)
+  - Model directory management (~/.cache/ala-gui/models/)
+- 🔧 **Model Compatibility**: Universal GPU support and Python version flexibility
+  - Flash attention compatibility (all GPUs, CPU, Apple Silicon MPS)
+  - Python 3.10+ for full SAM2 support
+  - Python 3.9+ fallback with Florence-2 only
+- 📚 **Comprehensive Documentation**: Setup and troubleshooting guides
+  - Model setup guide (MODEL_SETUP.md)
+  - Python upgrade guide (PYTHON_UPGRADE.md)
+  - Component documentation (MAINWINDOW.md, IMAGECANVAS.md, MODEL_UI.md)
+
+### 🚧 In Progress (v0.4.0)
+
 - ✏️ **Manual Editing**: Drawing tools (polygon, box, pencil, eraser) with undo/redo
+- 🎨 **Class Management**: Class list widget and label management
+
+### 📋 Planned (v0.5.0+)
+
 - 🎯 **Few-Shot Learning**: Embedded Gradio interface for classification with ResNet/CLIP/DINOv2
 - ✅ **Ground Truth Workflow**: Accept/reject annotations and build high-quality datasets
 - 🏋️ **YOLO Training**: Integrated YOLOv8 training from annotated data
-- 🎨 **Professional UI**: Light/Dark themes, keyboard shortcuts, internationalization (EN/KO)
+- 🎨 **Themes**: Light/Dark theme support
+- 🌐 **Internationalization**: Multi-language support (EN/KO)
 
-### Planned (v2.0+)
+### 🔮 Future (v2.0+)
 
 - 🎬 Video annotation support
 - 🔌 Plugin system for custom models
@@ -88,19 +111,76 @@ python src/main.py
 
 **For Python 3.9 → 3.10 upgrade**, see [docs/PYTHON_UPGRADE.md](docs/PYTHON_UPGRADE.md)
 
+## Quick Start
+
+### 1. Launch Application
+
+```bash
+cd ALA-GUI
+python src\main.py  # Windows
+# python src/main.py  # Linux/macOS
+```
+
+### 2. Import Images
+
+- **File → Import Images** (Ctrl+O)
+- Select one or more image files
+- Images appear in the left file list
+
+### 3. Run Auto-Annotation
+
+**First-time setup**: Install model dependencies
+```bash
+pip install timm einops
+```
+
+**Steps**:
+1. Click **Tools → Auto-Annotate** (Ctrl+A)
+2. Select models:
+   - **VLM Model**: Florence-2-large-no-flash (HF) - for object detection
+   - **Seg Model**: SAM2 Base+ (Auto-download) OR None (VLM only)
+3. Enter object classes (e.g., "person, car, dog")
+4. Click **Run Auto-Annotation**
+
+**Model Download**: On first run, models download automatically (~1.5GB for Florence-2, ~300MB for SAM2)
+
+**Note**: SAM2 requires Python 3.10+. See [docs/PYTHON_UPGRADE.md](docs/PYTHON_UPGRADE.md) if using Python 3.9.
+
+### 4. Navigate Images
+
+- **Previous Image**: Ctrl+Left or ← key
+- **Next Image**: Ctrl+Right or → key
+- **Zoom In/Out**: Mouse wheel or Ctrl++/Ctrl+-
+
+### 5. Next Steps
+
+- **Model Setup**: See [docs/MODEL_SETUP.md](docs/MODEL_SETUP.md) for manual model installation
+- **Troubleshooting**: Check MODEL_SETUP.md for common issues
+- **Documentation**: Explore [docs/](docs/) folder for component guides
+
 ## Development Status
 
-**Current Phase**: M0 - Project Setup (Week 1/15)
-**Last Updated**: 2025-01-13
-**Version**: 0.1.0-dev
+**Current Phase**: M4 - Annotation Tools & Manual Editing
+**Last Updated**: 2025-01-17
+**Version**: 0.3.0-alpha
 
 ### Milestone Progress
 
-- [x] M0: Project Setup (1 week) - **In Progress**
-- [ ] M1: Foundation & Core Infrastructure (1.5 weeks)
-- [ ] M2: PyQt6 Image Display & Navigation (2 weeks)
-- [ ] M3: Model Integration - SAM2 & Florence-2 (2.5 weeks)
-- [ ] M4: Annotation Tools & Manual Editing (2 weeks)
+- [x] **M0: Project Setup** (1 week) - ✅ Completed
+- [x] **M1: Foundation & Core Infrastructure** (1.5 weeks) - ✅ Completed
+- [x] **M2: PyQt6 Image Display & Navigation** (2 weeks) - ✅ Completed
+  - MainWindow with menu bar, toolbar, and status bar
+  - FileListWidget for image management
+  - ImageCanvas for image display with zoom/pan
+  - Keyboard shortcuts (Ctrl+O, Ctrl+A, Arrow keys, etc.)
+- [x] **M3: Model Integration - SAM2 & Florence-2** (2.5 weeks) - ✅ Completed
+  - Florence-2 VLM integration for object detection
+  - SAM2 segmentation integration for mask refinement
+  - ModelManager for model discovery and selection
+  - Auto-annotate dialog with VLM + Seg model selection
+  - Flash attention compatibility for all GPU architectures
+  - Python 3.10 support with 3.9 fallback
+- [ ] **M4: Annotation Tools & Manual Editing** (2 weeks) - 🚧 In Progress
 - [ ] M5: Web Integration - Few-Shot Learning (2 weeks)
 - [ ] M6: Pipeline Integration - Ground Truth & YOLO (2 weeks)
 - [ ] M7: Polish & User Experience (1.5 weeks)
@@ -108,9 +188,15 @@ python src/main.py
 
 **Total**: 15 weeks MVP + 5 weeks buffer = 20 weeks
 
-See [PLAN.md](../PLAN.md) for detailed roadmap.
-See [TODO.md](../TODO.md) for task breakdown (412 tasks, 580h).
-See [TECHSPEC.md](../TECHSPEC.md) for technical specifications.
+### Recent Major Updates
+
+- ✅ Manual model management system with two-dropdown selection
+- ✅ Python 3.10 upgrade support with comprehensive guide
+- ✅ Flash attention compatibility (works on all GPUs, CPU, MPS)
+- ✅ SAM2 optional fallback for Python 3.9 users
+- ✅ Complete GUI implementation with image viewer and navigation
+
+See [docs/](docs/) folder for detailed component documentation.
 
 ## Technology Stack
 
@@ -177,11 +263,19 @@ Future contributions welcome after v1.0 release. Guidelines will be added in CON
 
 ## Documentation
 
-- [PLAN.md](../PLAN.md) - Strategic implementation plan
-- [TECHSPEC.md](../TECHSPEC.md) - Technical specifications
-- [TODO.md](../TODO.md) - Detailed task list
-- [NEXT_STEPS.md](../NEXT_STEPS.md) - Quick start guide
-- docs/ - Component documentation (coming soon)
+### Setup & Installation
+- [PYTHON_UPGRADE.md](docs/PYTHON_UPGRADE.md) - Python 3.10 upgrade guide
+- [MODEL_SETUP.md](docs/MODEL_SETUP.md) - AI model setup and troubleshooting
+
+### Component Guides
+- [MAINWINDOW.md](docs/MAINWINDOW.md) - Main window architecture and UI components
+- [IMAGECANVAS.md](docs/IMAGECANVAS.md) - Image canvas implementation details
+- [MODEL_UI.md](docs/MODEL_UI.md) - Auto-annotate dialog and model integration
+- [BRANCHING_STRATEGY.md](docs/BRANCHING_STRATEGY.md) - Git workflow and branching
+
+### Testing
+- [tests/unit/](tests/unit/) - Unit tests for components and models
+- [tests/integration/](tests/integration/) - Integration tests for workflows
 
 ## Comparison with X-AnyLabeling
 
@@ -210,4 +304,6 @@ Project Repository: https://github.com/tygwan/ALA-AutoLabelAgent
 
 ---
 
-**Status**: 🚧 Under Active Development | **Target Release**: Q2 2025
+**Status**: 🚧 Alpha Release (v0.3.0) - Core Features Functional | **Target v1.0**: Q2 2025
+
+**Current Capabilities**: ✅ Image Viewer ✅ AI Auto-Annotation ✅ Model Management
