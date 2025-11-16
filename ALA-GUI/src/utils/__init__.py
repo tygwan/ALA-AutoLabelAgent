@@ -1,5 +1,6 @@
 """Utils package - Configuration, logging, error handling, and file utilities."""
 
+from utils.annotation_exporter import AnnotationExporter
 from utils.config_manager import ConfigManager
 from utils.exceptions import (
     AlaGuiException,
@@ -14,6 +15,7 @@ from utils.logger import Logger
 from utils.path_utils import PathUtils
 
 __all__ = [
+    "AnnotationExporter",
     "ConfigManager",
     "Logger",
     "AlaGuiException",
