@@ -1,84 +1,141 @@
 # ALA-AutoLabelAgent
 
-**Automatic Labeling Agent with GUI Interface**
+**AI-Powered Image Annotation Tool with PyQt6 GUI**
 
-PyQt6 기반의 자동 이미지 라벨링 도구입니다. Florence-2, GroundedSAM2, YOLOv8 등의 비전 모델을 통합하여 효율적인 어노테이션 워크플로우를 제공합니다.
+PyQt6 기반의 자동 이미지 라벨링 데스크톱 애플리케이션입니다. Florence-2 VLM과 SAM2 세그멘테이션을 통합하여 텍스트 프롬프트 기반의 AI 자동 어노테이션을 제공합니다.
+
+**Current Status**: 🚀 **Alpha v0.3.0** - Core Features Functional
+**Capabilities**: ✅ Interactive Image Viewer ✅ AI Auto-Annotation (Florence-2 + SAM2) ✅ Manual Model Management
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- Python 3.9+
+- **Python 3.10+** (Recommended - full SAM2 segmentation support)
+- **Python 3.9+** (Basic - Florence-2 bounding boxes only)
 - Windows / macOS / Linux
-- Git
+- CUDA GPU (recommended for faster inference)
 
 ### Installation
 
 ```bash
-# Clone repository
+# 1. Clone repository
 git clone https://github.com/tygwan/ALA-AutoLabelAgent.git
 cd ALA-AutoLabelAgent/ALA-GUI
 
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+# 2. Create virtual environment (Python 3.10 recommended)
+py -3.10 -m venv venv  # Windows
+# python3.10 -m venv venv  # Linux/macOS
 
-# Install dependencies
+# 3. Activate virtual environment
+venv\Scripts\activate  # Windows
+# source venv/bin/activate  # Linux/macOS
+
+# 4. Install dependencies
 pip install -r requirements.txt
-
-# Install pre-commit hooks
-pre-commit install
-
-# Run tests
-pytest
+pip install timm einops  # Florence-2 dependencies
 ```
 
 ### Run Application
 
 ```bash
 cd ALA-GUI
-python src/main.py
+python src\main.py  # Windows
+# python src/main.py  # Linux/macOS
 ```
+
+### First-time Usage
+
+1. **Import Images**: File → Import Images (Ctrl+O)
+2. **Run Auto-Annotation**: Tools → Auto-Annotate (Ctrl+A)
+3. **Select Models**:
+   - VLM: Florence-2-large-no-flash (HF)
+   - Seg: SAM2 Base+ (Auto-download) or None
+4. **Enter Classes**: e.g., "person, car, dog"
+5. **Run**: Models download automatically on first use (~1.5GB Florence-2, ~300MB SAM2)
+
+**📖 Detailed Guide**: See [ALA-GUI/README.md](ALA-GUI/README.md) for comprehensive documentation
+
+## ✨ Key Features
+
+### 🖼️ Interactive Image Viewer
+- PyQt6-based canvas with zoom/pan/navigation
+- File list management with Previous/Next (Ctrl+Left/Right)
+- Keyboard shortcuts (Ctrl+O, Ctrl+A, Arrow keys)
+- Real-time image display with smooth interactions
+
+### 🤖 AI-Powered Auto-Annotation
+- **Florence-2 VLM**: Text-prompt-based object detection
+- **SAM2**: Refined mask segmentation
+- **Two-dropdown model selection**: VLM + Segmentation
+- **Manual model management**: `~/.cache/ala-gui/models/`
+- **Auto-download**: Models download on first use
+
+### 🔧 Universal Compatibility
+- **Flash attention compatibility**: Works on all GPUs, CPU, Apple Silicon (MPS)
+- **Python 3.10+**: Full SAM2 segmentation support
+- **Python 3.9+**: Fallback with Florence-2 bounding boxes
+- **Cross-platform**: Windows, macOS, Linux
+
+### 📚 Comprehensive Documentation
+- Model setup guide with troubleshooting
+- Python upgrade guide (3.9 → 3.10)
+- Component architecture documentation
+- Testing and development guides
 
 ## 📁 Project Structure
 
 ```
 ALA-AutoLabelAgent/
-├── ALA-GUI/                # Main GUI application
+├── ALA-GUI/                # Main GUI application (v0.3.0-alpha)
 │   ├── src/               # Source code (MVC architecture)
-│   │   ├── models/        # Data models
-│   │   ├── views/         # PyQt6 UI components
-│   │   ├── controllers/   # Business logic
-│   │   └── utils/         # Utility functions
-│   ├── tests/             # Test suite
-│   │   ├── unit/          # Unit tests
-│   │   ├── integration/   # Integration tests
+│   │   ├── models/        # AI models (Florence-2, SAM2, ModelManager)
+│   │   ├── views/         # PyQt6 UI (MainWindow, Canvas, Dialogs)
+│   │   ├── controllers/   # Business logic (ShortcutManager)
+│   │   └── utils/         # Utilities (AnnotationExporter)
+│   ├── tests/             # Test suite (50+ unit, 20+ integration)
+│   │   ├── unit/          # Component tests
+│   │   ├── integration/   # Workflow tests
 │   │   └── e2e/           # End-to-end tests
-│   ├── docs/              # Documentation
+│   ├── docs/              # Documentation (7 comprehensive guides)
 │   └── requirements.txt   # Python dependencies
-├── PLAN.md                # 15-week development roadmap
-├── TECHSPEC.md            # Technical specifications
-├── TODO.md                # 412 detailed tasks
+├── model_references/      # Reference implementations (autodistill)
 └── LICENSE                # MIT License
 ```
 
 ## 🎯 Development Roadmap
 
-**Current Status**: M0 Complete (Project Setup) ✅
+**Current Status**: M4 In Progress (Annotation Tools) 🚧
+**Version**: v0.3.0-alpha
+**Last Updated**: 2025-01-17
 
-### Milestones
+### Completed Milestones
 
-- **M0**: Project Setup ✅ (완료)
-- **M1**: Foundation & Core Infrastructure (진행 예정)
-- **M2**: PyQt6 Image Display & Navigation
-- **M3**: Model Integration (Florence-2, SAM2, YOLO)
-- **M4**: Annotation Tools
-- **M5**: Web Integration (Gradio)
-- **M6**: Pipeline Integration
-- **M7**: Polish & UX Improvements
-- **M8**: Deployment & Documentation
+- ✅ **M0**: Project Setup & Infrastructure
+- ✅ **M1**: Foundation & Core Infrastructure
+- ✅ **M2**: PyQt6 Image Display & Navigation
+  - MainWindow with menu/toolbar/shortcuts
+  - FileListWidget for image management
+  - ImageCanvas with zoom/pan
+- ✅ **M3**: AI Model Integration
+  - Florence-2 VLM for object detection
+  - SAM2 for mask segmentation
+  - ModelManager for model discovery
+  - Flash attention compatibility (all GPUs)
+  - Python 3.10 support with 3.9 fallback
 
-자세한 계획은 [PLAN.md](PLAN.md) 참고
+### In Progress
+
+- 🚧 **M4**: Annotation Tools & Manual Editing (Current)
+
+### Upcoming
+
+- **M5**: Web Integration - Few-Shot Learning (Gradio)
+- **M6**: Pipeline Integration - Ground Truth & YOLO Training
+- **M7**: Polish & User Experience
+- **M8**: Deployment & Distribution
+
+**📖 Detailed Roadmap**: See [ALA-GUI/README.md](ALA-GUI/README.md#development-status)
 
 ## 🧪 Testing
 
@@ -118,39 +175,47 @@ bandit -r src/
 
 ## 📚 Documentation
 
-- **[SETUP.md](ALA-GUI/docs/SETUP.md)**: 설치 가이드
-- **[TESTING.md](ALA-GUI/docs/TESTING.md)**: 테스트 가이드
-- **[STYLEGUIDE.md](ALA-GUI/docs/STYLEGUIDE.md)**: 코드 스타일 가이드
-- **[CONTRIBUTING.md](ALA-GUI/CONTRIBUTING.md)**: 기여 가이드
-- **[KNOWN_ISSUES.md](ALA-GUI/KNOWN_ISSUES.md)**: 알려진 이슈
+### 🌟 Main Documentation
+- **[ALA-GUI/README.md](ALA-GUI/README.md)**: Complete user and developer guide
+
+### 🛠️ Setup & Installation
+- **[PYTHON_UPGRADE.md](ALA-GUI/docs/PYTHON_UPGRADE.md)**: Python 3.10 upgrade guide
+- **[MODEL_SETUP.md](ALA-GUI/docs/MODEL_SETUP.md)**: AI model setup and troubleshooting
+
+### 📖 Component Guides
+- **[MAINWINDOW.md](ALA-GUI/docs/MAINWINDOW.md)**: Main window architecture
+- **[IMAGECANVAS.md](ALA-GUI/docs/IMAGECANVAS.md)**: Image canvas implementation
+- **[MODEL_UI.md](ALA-GUI/docs/MODEL_UI.md)**: Auto-annotate dialog guide
+
+### 🧪 Development
+- **[BRANCHING_STRATEGY.md](ALA-GUI/docs/BRANCHING_STRATEGY.md)**: Git workflow
+- **[tests/](ALA-GUI/tests/)**: Unit and integration tests
 
 ## 🏗️ Technology Stack
 
-**Core Framework**:
-- PyQt6 6.6.1 - Desktop GUI framework
-- Python 3.9+ - Programming language
+| Category | Technology | Version | Status |
+|----------|------------|---------|--------|
+| **GUI Framework** | PyQt6 | 6.6.1 | ✅ |
+| **Language** | Python | 3.10+ | ✅ |
+| **AI Models** | Florence-2 | microsoft/Florence-2-large | ✅ |
+| | SAM2 | Base+ | ✅ |
+| | YOLOv8 | - | 📋 Planned |
+| **Deep Learning** | PyTorch | 2.1.2 | ✅ |
+| | Transformers | 4.36.2 | ✅ |
+| | timm | 1.0.22+ | ✅ |
+| | einops | 0.8.1+ | ✅ |
+| **Image Processing** | OpenCV | 4.9+ | ✅ |
+| | Pillow | 10.2+ | ✅ |
+| **Testing** | pytest + pytest-qt | - | ✅ |
+| | pytest-cov | - | ✅ |
+| **Code Quality** | Black, flake8, mypy | - | ✅ |
+| | isort, bandit, pylint | - | ✅ |
 
-**Testing**:
-- pytest + pytest-qt - Testing framework
-- pytest-cov - Coverage reporting
-
-**Code Quality**:
-- Black - Code formatter
-- flake8 - Linter
-- mypy - Type checker
-- pylint - Additional linting
-- isort - Import sorter
-- bandit - Security scanner
-
-**Computer Vision** (M3+):
-- Florence-2 - Vision-language model
-- GroundedSAM2 - Segmentation
-- YOLOv8 - Object detection
-- OpenCV - Image processing
-
-**ML/DL** (M3+):
-- PyTorch - Deep learning framework
-- transformers - Model hub
+**Key Features**:
+- 🔧 Flash attention compatibility (all GPU architectures, CPU, MPS)
+- 🔧 Python 3.9+ fallback support (Florence-2 only)
+- 🔧 Manual model management with ModelManager
+- 🔧 Lazy model loading for faster startup
 
 ## 🤝 Contributing
 
@@ -176,16 +241,34 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📊 Project Status
 
-**M0: Project Setup** ✅ 완료 (2025-01-13)
-- 프로젝트 구조 생성
-- 테스팅 프레임워크 설정
-- CI/CD 파이프라인 구성
-- 코드 품질 도구 설정
-- 문서화 완료
+### Current Release: v0.3.0-alpha (2025-01-17)
 
-**다음 단계**: M1 Foundation & Core Infrastructure
+**Completed**:
+- ✅ **M0-M3**: Project Setup → AI Model Integration
+- ✅ Interactive image viewer with zoom/pan
+- ✅ Florence-2 + SAM2 auto-annotation
+- ✅ Manual model management system
+- ✅ Python 3.10 upgrade support
+- ✅ Flash attention compatibility
+- ✅ Comprehensive documentation
+
+**In Progress**:
+- 🚧 **M4**: Annotation Tools & Manual Editing
+
+**Coming Next**:
+- 📋 Drawing tools (polygon, box, pencil)
+- 📋 Class management widget
+- 📋 Few-shot learning integration (Gradio)
+
+### Statistics
+- **88 files changed** in M2-M3
+- **14,783+ lines added**
+- **50+ unit tests**
+- **20+ integration tests**
+- **7 comprehensive documentation files**
 
 ---
 
-**Last Updated**: 2025-01-13
-**Version**: 0.1.0 (M0 Complete)
+**Last Updated**: 2025-01-17
+**Version**: 0.3.0-alpha (M2-M3 Complete)
+**Next Milestone**: M4 - Annotation Tools (Q1 2025)
