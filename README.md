@@ -1,274 +1,279 @@
 # ALA-AutoLabelAgent
 
-**AI-Powered Image Annotation Tool with PyQt6 GUI**
+**AI-Powered Image Annotation Platform - Desktop & Web**
 
-PyQt6 기반의 자동 이미지 라벨링 데스크톱 애플리케이션입니다. Florence-2 VLM과 SAM2 세그멘테이션을 통합하여 텍스트 프롬프트 기반의 AI 자동 어노테이션을 제공합니다.
+Transform your image labeling workflow with AI-powered automation. ALA-AutoLabelAgent combines Florence-2 vision-language models and SAM2 segmentation to deliver fast, accurate annotations through both a desktop application and modern web interface.
 
-**Current Status**: 🚀 **Alpha v0.3.0** - Core Features Functional
-**Capabilities**: ✅ Interactive Image Viewer ✅ AI Auto-Annotation (Florence-2 + SAM2) ✅ Manual Model Management
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
+[![React](https://img.shields.io/badge/React-18.2-blue.svg)](https://reactjs.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-Latest-green.svg)](https://fastapi.tiangolo.com/)
 
-## 🚀 Quick Start
+---
 
-### Prerequisites
+## 🎯 Choose Your Interface
 
-- **Python 3.10+** (Recommended - full SAM2 segmentation support)
-- **Python 3.9+** (Basic - Florence-2 bounding boxes only)
-- Windows / macOS / Linux
-- CUDA GPU (recommended for faster inference)
+### 🖥️ [ALA-GUI](ALA-GUI/) - Desktop Application
+**Best for**: Individual users, offline work, direct model control
 
-### Installation
+- **Native PyQt6 desktop app** for Windows, macOS, Linux
+- Full-featured image viewer with zoom/pan
+- Florence-2 + SAM2 integration
+- Offline annotation capabilities
+- **Status**: ✅ Production-ready (v0.3.0-alpha)
 
-```bash
-# 1. Clone repository
-git clone https://github.com/tygwan/ALA-AutoLabelAgent.git
-cd ALA-AutoLabelAgent/ALA-GUI
+[**📖 Get Started with Desktop →**](ALA-GUI/README.md)
 
-# 2. Create virtual environment (Python 3.10 recommended)
-py -3.10 -m venv venv  # Windows
-# python3.10 -m venv venv  # Linux/macOS
+### 🌐 [ALA-Web](ALA-Web/) - Web Application  
+**Best for**: Teams, remote access, modern workflows
 
-# 3. Activate virtual environment
-venv\Scripts\activate  # Windows
-# source venv/bin/activate  # Linux/macOS
+- **Modern React + FastAPI** web platform
+- Drag-and-drop file uploads
+- Caption ontology editor (key-value format)
+- Preprocessing pipeline (crop, mask, background removal)
+- Real-time collaboration ready
+- **Status**: ✅ Core features complete
 
-# 4. Install dependencies
-pip install -r requirements.txt
-pip install timm einops  # Florence-2 dependencies
-```
+[**📖 Get Started with Web →**](ALA-Web/README.md)
 
-### Run Application
-
-```bash
-cd ALA-GUI
-python src\main.py  # Windows
-# python src/main.py  # Linux/macOS
-```
-
-### First-time Usage
-
-1. **Import Images**: File → Import Images (Ctrl+O)
-2. **Run Auto-Annotation**: Tools → Auto-Annotate (Ctrl+A)
-3. **Select Models**:
-   - VLM: Florence-2-large-no-flash (HF)
-   - Seg: SAM2 Base+ (Auto-download) or None
-4. **Enter Classes**: e.g., "person, car, dog"
-5. **Run**: Models download automatically on first use (~1.5GB Florence-2, ~300MB SAM2)
-
-**📖 Detailed Guide**: See [ALA-GUI/README.md](ALA-GUI/README.md) for comprehensive documentation
+---
 
 ## ✨ Key Features
 
-### 🖼️ Interactive Image Viewer
-- PyQt6-based canvas with zoom/pan/navigation
-- File list management with Previous/Next (Ctrl+Left/Right)
-- Keyboard shortcuts (Ctrl+O, Ctrl+A, Arrow keys)
-- Real-time image display with smooth interactions
+### 🤖 AI-Powered Automation
+- **Florence-2 VLM**: State-of-the-art object detection from text prompts
+- **SAM2 Segmentation**: Pixel-perfect mask generation
+- **Caption Ontology**: Structured class definitions with descriptions
+- **Auto-download**: Models fetch automatically on first use
 
-### 🤖 AI-Powered Auto-Annotation
-- **Florence-2 VLM**: Text-prompt-based object detection
-- **SAM2**: Refined mask segmentation
-- **Two-dropdown model selection**: VLM + Segmentation
-- **Manual model management**: `~/.cache/ala-gui/models/`
-- **Auto-download**: Models download on first use
+### 🎨 Complete Annotation Pipeline
+1. **Upload** - Drag-and-drop images/videos
+2. **Annotate** - AI generates bounding boxes and masks
+3. **Preprocess** - Crop, remove backgrounds, resize (640×480)
+4. **Review** - Quality control and manual adjustments
+5. **Export** - Multiple formats (YOLO, COCO, etc.)
 
-### 🔧 Universal Compatibility
-- **Flash attention compatibility**: Works on all GPUs, CPU, Apple Silicon (MPS)
-- **Python 3.10+**: Full SAM2 segmentation support
-- **Python 3.9+**: Fallback with Florence-2 bounding boxes
-- **Cross-platform**: Windows, macOS, Linux
+### 🚀 Modern Technology Stack
+| Component | Desktop (GUI) | Web |
+|:---|:---|:---|
+| **Frontend** | PyQt6 | React 18 + TypeScript |
+| **Backend** | Python | FastAPI |
+| **AI Models** | Florence-2, SAM2 | Florence-2, SAM2 |
+| **Image Processing** | OpenCV, Pillow | OpenCV, Pillow |
+| **Platform** | Native Desktop | Modern Browser |
 
-### 📚 Comprehensive Documentation
-- Model setup guide with troubleshooting
-- Python upgrade guide (3.9 → 3.10)
-- Component architecture documentation
-- Testing and development guides
+---
 
-## 📁 Project Structure
+## 🚀 Quick Start
 
-```
-ALA-AutoLabelAgent/
-├── ALA-GUI/                # Main GUI application (v0.3.0-alpha)
-│   ├── src/               # Source code (MVC architecture)
-│   │   ├── models/        # AI models (Florence-2, SAM2, ModelManager)
-│   │   ├── views/         # PyQt6 UI (MainWindow, Canvas, Dialogs)
-│   │   ├── controllers/   # Business logic (ShortcutManager)
-│   │   └── utils/         # Utilities (AnnotationExporter)
-│   ├── tests/             # Test suite (50+ unit, 20+ integration)
-│   │   ├── unit/          # Component tests
-│   │   ├── integration/   # Workflow tests
-│   │   └── e2e/           # End-to-end tests
-│   ├── docs/              # Documentation (7 comprehensive guides)
-│   └── requirements.txt   # Python dependencies
-├── model_references/      # Reference implementations (autodistill)
-└── LICENSE                # MIT License
-```
-
-## 🎯 Development Roadmap
-
-**Current Status**: M4 In Progress (Annotation Tools) 🚧
-**Version**: v0.3.0-alpha
-**Last Updated**: 2025-01-17
-
-### Completed Milestones
-
-- ✅ **M0**: Project Setup & Infrastructure
-- ✅ **M1**: Foundation & Core Infrastructure
-- ✅ **M2**: PyQt6 Image Display & Navigation
-  - MainWindow with menu/toolbar/shortcuts
-  - FileListWidget for image management
-  - ImageCanvas with zoom/pan
-- ✅ **M3**: AI Model Integration
-  - Florence-2 VLM for object detection
-  - SAM2 for mask segmentation
-  - ModelManager for model discovery
-  - Flash attention compatibility (all GPUs)
-  - Python 3.10 support with 3.9 fallback
-
-### In Progress
-
-- 🚧 **M4**: Annotation Tools & Manual Editing (Current)
-
-### Upcoming
-
-- **M5**: Web Integration - Few-Shot Learning (Gradio)
-- **M6**: Pipeline Integration - Ground Truth & YOLO Training
-- **M7**: Polish & User Experience
-- **M8**: Deployment & Distribution
-
-**📖 Detailed Roadmap**: See [ALA-GUI/README.md](ALA-GUI/README.md#development-status)
-
-## 🧪 Testing
+### Option 1: Desktop Application (ALA-GUI)
 
 ```bash
-# Run all tests
-pytest
+# Clone repository
+git clone https://github.com/tygwan/ALA-AutoLabelAgent.git
+cd ALA-AutoLabelAgent/ALA-GUI
 
-# Run with coverage
-pytest --cov=src --cov-report=html
+# Create virtual environment (Python 3.10+)
+python -m venv venv
+venv\Scripts\activate  # Windows
+# source venv/bin/activate  # Linux/macOS
 
-# Run specific test category
-pytest -m unit
-pytest -m integration
-pytest -m e2e
+# Install dependencies
+pip install -r requirements.txt
+pip install timm einops
+
+# Run application
+python src/main.py
 ```
 
-## 🔧 Development
+**First Time**: File → Import Images → Tools → Auto-Annotate → Enter classes (e.g., "person, car, dog")
 
-**TDD Workflow**: RED → GREEN → REFACTOR → COMMIT
+### Option 2: Web Application (ALA-Web)
 
 ```bash
-# Format code
-black src/ tests/
-isort src/ tests/
+cd ALA-AutoLabelAgent/ALA-Web
 
-# Lint
-flake8 src/ tests/
+# Backend setup
+cd backend
+python -m venv venv
+venv\Scripts\activate  # Windows
+pip install -r requirements.txt
+uvicorn main:app --reload  # Runs on http://localhost:8000
 
-# Type check
-mypy src/
-
-# Security scan
-bandit -r src/
+# Frontend setup (new terminal)
+cd ../frontend
+npm install
+npm run dev  # Runs on http://localhost:5173
 ```
 
-자세한 개발 가이드는 [ALA-GUI/CONTRIBUTING.md](ALA-GUI/CONTRIBUTING.md) 참고
+**First Time**: Open http://localhost:5173 → Drag images → Edit Caption Ontology → Run Annotation
+
+---
 
 ## 📚 Documentation
 
-### 🌟 Main Documentation
-- **[ALA-GUI/README.md](ALA-GUI/README.md)**: Complete user and developer guide
+### 🌟 Main Guides
+- **[ALA-GUI README](ALA-GUI/README.md)** - Desktop app documentation
+- **[ALA-Web README](ALA-Web/README.md)** - Web platform documentation
 
 ### 🛠️ Setup & Installation
-- **[PYTHON_UPGRADE.md](ALA-GUI/docs/PYTHON_UPGRADE.md)**: Python 3.10 upgrade guide
-- **[MODEL_SETUP.md](ALA-GUI/docs/MODEL_SETUP.md)**: AI model setup and troubleshooting
+- **[Python Upgrade Guide](ALA-GUI/docs/PYTHON_UPGRADE.md)** - Upgrade to Python 3.10
+- **[Model Setup](ALA-GUI/docs/MODEL_SETUP.md)** - AI model configuration
+- **[Backend API Docs](http://localhost:8000/docs)** - FastAPI Swagger UI (when running)
 
-### 📖 Component Guides
-- **[MAINWINDOW.md](ALA-GUI/docs/MAINWINDOW.md)**: Main window architecture
-- **[IMAGECANVAS.md](ALA-GUI/docs/IMAGECANVAS.md)**: Image canvas implementation
-- **[MODEL_UI.md](ALA-GUI/docs/MODEL_UI.md)**: Auto-annotate dialog guide
+### 📖 Technical Deep-Dives
+- **[Architecture](ALA-GUI/docs/MAINWINDOW.md)** - Component design
+- **[Testing Guide](ALA-GUI/tests/)** - Unit & integration tests
+- **[Contributing](ALA-GUI/CONTRIBUTING.md)** - Development workflow
 
-### 🧪 Development
-- **[BRANCHING_STRATEGY.md](ALA-GUI/docs/BRANCHING_STRATEGY.md)**: Git workflow
-- **[tests/](ALA-GUI/tests/)**: Unit and integration tests
+---
 
-## 🏗️ Technology Stack
+## 🗂️ Project Structure
 
-| Category | Technology | Version | Status |
-|----------|------------|---------|--------|
-| **GUI Framework** | PyQt6 | 6.6.1 | ✅ |
-| **Language** | Python | 3.10+ | ✅ |
-| **AI Models** | Florence-2 | microsoft/Florence-2-large | ✅ |
-| | SAM2 | Base+ | ✅ |
-| | YOLOv8 | - | 📋 Planned |
-| **Deep Learning** | PyTorch | 2.1.2 | ✅ |
-| | Transformers | 4.36.2 | ✅ |
-| | timm | 1.0.22+ | ✅ |
-| | einops | 0.8.1+ | ✅ |
-| **Image Processing** | OpenCV | 4.9+ | ✅ |
-| | Pillow | 10.2+ | ✅ |
-| **Testing** | pytest + pytest-qt | - | ✅ |
-| | pytest-cov | - | ✅ |
-| **Code Quality** | Black, flake8, mypy | - | ✅ |
-| | isort, bandit, pylint | - | ✅ |
+```
+ALA-AutoLabelAgent/
+├── ALA-GUI/                  # Desktop Application (PyQt6)
+│   ├── src/                  # Source code (MVC architecture)
+│   │   ├── models/           # AI models (Florence-2, SAM2)
+│   │   ├── views/            # PyQt6 UI components
+│   │   ├── controllers/      # Business logic
+│   │   └── utils/            # Utilities
+│   ├── tests/                # 50+ unit, 20+ integration tests
+│   ├── docs/                 # Comprehensive documentation
+│   └── requirements.txt      # Python dependencies
+│
+├── ALA-Web/                  # Web Application (React + FastAPI)
+│   ├── backend/              # FastAPI server
+│   │   ├── routers/          # API endpoints
+│   │   ├── services/         # Business logic
+│   │   └── main.py           # Entry point
+│   ├── frontend/             # React application
+│   │   ├── src/
+│   │   │   ├── components/   # UI components
+│   │   │   ├── pages/        # Page components
+│   │   │   └── hooks/        # Custom React hooks
+│   │   └── package.json      # Node dependencies
+│   └── README.md             # Web app documentation
+│
+├── model_references/         # Reference implementations
+└── README.md                 # This file
+```
 
-**Key Features**:
-- 🔧 Flash attention compatibility (all GPU architectures, CPU, MPS)
-- 🔧 Python 3.9+ fallback support (Florence-2 only)
-- 🔧 Manual model management with ModelManager
-- 🔧 Lazy model loading for faster startup
+---
+
+## 🎯 Use Cases
+
+### 🏭 Manufacturing & Quality Control
+- Defect detection on assembly lines
+- Product classification
+- Automated visual inspection
+
+### 🚗 Autonomous Vehicles
+- Object detection (pedestrians, vehicles, traffic signs)
+- Lane segmentation
+- Dataset preparation for training
+
+### 🏥 Medical Imaging
+- Cell counting and classification
+- Lesion detection
+- Medical image annotation
+
+### 🌾 Agriculture
+- Crop disease identification
+- Yield estimation
+- Weed detection
+
+---
+
+## 🔧 System Requirements
+
+### Desktop (ALA-GUI)
+- **OS**: Windows 10+, macOS 11+, Ubuntu 20.04+
+- **Python**: 3.10+ (recommended), 3.9+ (limited)
+- **RAM**: 8GB minimum, 16GB recommended
+- **GPU**: CUDA-capable GPU recommended (CPU fallback supported)
+- **Storage**: 2GB for models + dataset space
+
+### Web (ALA-Web)
+- **Server**: Same as desktop
+- **Client**: Modern web browser (Chrome, Firefox, Safari, Edge)
+- **Network**: Local or remote deployment supported
+
+---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please read [CONTRIBUTING.md](ALA-GUI/CONTRIBUTING.md) for details.
+We welcome contributions! Here's how:
 
-### Development Process
+1. **Fork** this repository
+2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
+3. **Write tests** (we use TDD)
+4. **Commit** changes (`git commit -m 'feat: add amazing feature'`)
+5. **Push** to branch (`git push origin feature/amazing-feature`)
+6. **Open** a Pull Request
 
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Write tests (TDD approach)
-4. Commit changes (`git commit -m 'feat: add amazing feature'`)
-5. Push to branch (`git push origin feature/amazing-feature`)
-6. Open Pull Request
+See [CONTRIBUTING.md](ALA-GUI/CONTRIBUTING.md) for detailed guidelines.
+
+---
+
+## 📊 Development Status
+
+### ✅ Completed
+- **Desktop App (ALA-GUI)**: Production-ready v0.3.0-alpha
+  - Interactive image viewer
+  - Florence-2 + SAM2 integration
+  - Manual model management
+  - Comprehensive testing suite
+
+- **Web App (ALA-Web)**: Core features complete
+  - Upload & asset management
+  - Caption ontology editor
+  - Preprocessing pipeline
+  - Backend API (13 endpoints)
+
+### 🚧 In Progress
+- Manual annotation tools
+- Classification workflow
+- Data flow tracking
+
+### 📋 Planned
+- Few-shot learning integration
+- YOLO training pipeline
+- Cloud deployment
+- Multi-user collaboration
+
+---
 
 ## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🐛 Known Issues
+---
 
-- **PyQt6 on Windows**: DLL loading issue 문서화됨 ([KNOWN_ISSUES.md](ALA-GUI/KNOWN_ISSUES.md))
-- 해결 방법 및 workaround 제공
+## 🙏 Acknowledgments
 
-## 📊 Project Status
-
-### Current Release: v0.3.0-alpha (2025-01-17)
-
-**Completed**:
-- ✅ **M0-M3**: Project Setup → AI Model Integration
-- ✅ Interactive image viewer with zoom/pan
-- ✅ Florence-2 + SAM2 auto-annotation
-- ✅ Manual model management system
-- ✅ Python 3.10 upgrade support
-- ✅ Flash attention compatibility
-- ✅ Comprehensive documentation
-
-**In Progress**:
-- 🚧 **M4**: Annotation Tools & Manual Editing
-
-**Coming Next**:
-- 📋 Drawing tools (polygon, box, pencil)
-- 📋 Class management widget
-- 📋 Few-shot learning integration (Gradio)
-
-### Statistics
-- **88 files changed** in M2-M3
-- **14,783+ lines added**
-- **50+ unit tests**
-- **20+ integration tests**
-- **7 comprehensive documentation files**
+- **Florence-2**: Microsoft Research (Vision-Language Model)
+- **SAM2**: Meta AI (Segment Anything Model 2)
+- **PyQt**: Riverbank Computing (GUI Framework)
+- **FastAPI**: Sebastián Ramírez (Web Framework)
+- **React**: Meta (UI Library)
 
 ---
 
-**Last Updated**: 2025-01-17
-**Version**: 0.3.0-alpha (M2-M3 Complete)
-**Next Milestone**: M4 - Annotation Tools (Q1 2025)
+## 📧 Contact & Support
+
+- **Issues**: [GitHub Issues](https://github.com/tygwan/ALA-AutoLabelAgent/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/tygwan/ALA-AutoLabelAgent/discussions)
+- **Email**: [Create an issue for support]
+
+---
+
+**Last Updated**: 2025-01-19  
+**Desktop Version**: v0.3.0-alpha  
+**Web Version**: v0.1.0-beta  
+
+---
+
+<p align="center">
+  <strong>⭐ Star this project if you find it useful!</strong>
+</p>

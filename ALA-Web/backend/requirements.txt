@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+python-multipart
+# Reuse existing dependencies
+torch
+transformers
+timm
+einops
+opencv-python
+Pillow
+numpy
