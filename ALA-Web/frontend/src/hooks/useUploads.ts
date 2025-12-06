@@ -7,6 +7,8 @@ interface UploadedFile {
     file_type: 'image' | 'video';
     size: number;
     uploaded_at: string;
+    project_id?: string;
+    original_path?: string;
 }
 
 const API_URL = 'http://localhost:8000';
@@ -20,7 +22,9 @@ export const useUploads = () => {
         setLoading(true);
         try {
             const response = await axios.get(`${API_URL}/api/upload/list`);
-            setFiles(response.data.files);
+            // API returns a list directly
+            const filesList = Array.isArray(response.data) ? response.data : (response.data.files || []);
+            setFiles(filesList);
             setError(null);
         } catch (err) {
             setError('Failed to fetch files');
@@ -30,12 +34,16 @@ export const useUploads = () => {
         }
     };
 
-    const uploadFile = async (file: File) => {
+    const uploadFile = async (file: File, projectId?: string) => {
         const formData = new FormData();
         formData.append('file', file);
 
         try {
-            await axios.post(`${API_URL}/api/upload/file`, formData, {
+            const url = projectId
+                ? `${API_URL}/api/upload/file?project_id=${projectId}`
+                : `${API_URL}/api/upload/file`;
+
+            await axios.post(url, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             await fetchFiles(); // Refresh list
@@ -45,14 +53,18 @@ export const useUploads = () => {
         }
     };
 
-    const uploadBatch = async (files: FileList) => {
+    const uploadBatch = async (files: FileList, projectId?: string) => {
         const formData = new FormData();
         Array.from(files).forEach(file => {
             formData.append('files', file);
         });
 
         try {
-            await axios.post(`${API_URL}/api/upload/batch`, formData, {
+            const url = projectId
+                ? `${API_URL}/api/upload/batch?project_id=${projectId}`
+                : `${API_URL}/api/upload/batch`;
+
+            await axios.post(url, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             await fetchFiles(); // Refresh list

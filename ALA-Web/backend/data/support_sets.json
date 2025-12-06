@@ -1,0 +1,71 @@
+{
+    "support_v1": {
+        "support_set_id": "support_v1",
+        "name": "Cat-Dog Baseline",
+        "created_at": "2025-11-22T06:00:00Z",
+        "classes": {
+            "class_0": {
+                "class_name": "Cat",
+                "images": [
+                    {
+                        "image_id": "support_001",
+                        "annotation_ref": "support_001"
+                    },
+                    {
+                        "image_id": "support_002",
+                        "annotation_ref": "support_002"
+                    }
+                ]
+            },
+            "class_1": {
+                "class_name": "Dog",
+                "images": [
+                    {
+                        "image_id": "support_003",
+                        "annotation_ref": "support_003"
+                    }
+                ]
+            }
+        },
+        "total_images": 3
+    },
+    "support_v2": {
+        "support_set_id": "support_v2",
+        "name": "Cat-Dog Extended",
+        "created_at": "2025-11-22T07:45:00Z",
+        "parent_version": "support_v1",
+        "classes": {
+            "class_0": {
+                "class_name": "Cat",
+                "images": [
+                    {
+                        "image_id": "support_001",
+                        "annotation_ref": "support_001"
+                    },
+                    {
+                        "image_id": "support_002",
+                        "annotation_ref": "support_002"
+                    },
+                    {
+                        "image_id": "support_004",
+                        "annotation_ref": "support_004"
+                    }
+                ]
+            },
+            "class_1": {
+                "class_name": "Dog",
+                "images": [
+                    {
+                        "image_id": "support_003",
+                        "annotation_ref": "support_003"
+                    },
+                    {
+                        "image_id": "support_005",
+                        "annotation_ref": "support_005"
+                    }
+                ]
+            }
+        },
+        "total_images": 5
+    }
+}

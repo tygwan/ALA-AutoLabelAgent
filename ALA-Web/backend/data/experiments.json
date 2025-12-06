@@ -1,0 +1,42 @@
+{
+  "exp_001": {
+    "experiment_id": "exp_001",
+    "name": "Cat vs Dog - Baseline",
+    "created_at": "2025-11-22T07:30:00Z",
+    "support_set_id": "support_v1",
+    "query_set_id": "query_batch_001",
+    "status": "completed",
+    "results_ref": "exp_001_results",
+    "metadata": {
+      "method": "cosine_similarity",
+      "threshold": 0.7
+    }
+  },
+  "exp_002": {
+    "experiment_id": "exp_002",
+    "name": "Cat vs Dog - More Support Images",
+    "created_at": "2025-11-22T08:00:00Z",
+    "support_set_id": "support_v2",
+    "query_set_id": "query_batch_001",
+    "status": "completed",
+    "results_ref": "exp_002_results",
+    "parent_experiment": "exp_001",
+    "metadata": {
+      "method": "cosine_similarity",
+      "threshold": 0.7
+    }
+  },
+  "exp_003": {
+    "experiment_id": "exp_003",
+    "name": "Testing New Query Set",
+    "created_at": "2025-11-22T09:15:00Z",
+    "support_set_id": "support_v2",
+    "query_set_id": "query_batch_002",
+    "status": "running",
+    "results_ref": "exp_003_results",
+    "metadata": {
+      "method": "cosine_similarity",
+      "threshold": 0.75
+    }
+  }
+}

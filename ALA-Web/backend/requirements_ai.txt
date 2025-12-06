@@ -1,0 +1,18 @@
+# AI Model Dependencies for Auto-Annotation
+# This single package includes Florence-2 + SAM2 integration
+
+# Main package (includes SAM2!)
+autodistill-grounded-sam-2>=0.1.0
+
+# Core dependencies
+torch>=2.0.0
+torchvision>=0.15.0
+
+# Vision utilities
+supervision>=0.22.0
+opencv-python>=4.8.0
+pillow>=10.0.0
+numpy>=1.24.0
+
+# Note: No need to manually install SAM2 or download checkpoints!
+# autodistill-grounded-sam-2 handles everything automatically.

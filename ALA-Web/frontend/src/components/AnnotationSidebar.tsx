@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Play, Square, Edit2 } from 'lucide-react';
 import { OntologyEditor } from './OntologyEditor';
 
@@ -8,6 +8,7 @@ interface AnnotationSidebarProps {
     isProcessing: boolean;
     progress: number;
     statusMessage: string;
+    initialOntology?: Record<string, string>;
 }
 
 export interface AnnotationParams {
@@ -22,11 +23,20 @@ export const AnnotationSidebar: React.FC<AnnotationSidebarProps> = ({
     isProcessing,
     progress,
     statusMessage,
+    initialOntology = {}
 }) => {
-    const [vlmModel, setVlmModel] = useState('florence-2-large');
+    const [vlmModel, setVlmModel] = useState('florence-2-base');
     const [segModel, setSegModel] = useState('sam2-base');
-    const [ontology, setOntology] = useState<Record<string, string>>({});
+    const [ontology, setOntology] = useState<Record<string, string>>(initialOntology);
     const [showOntologyEditor, setShowOntologyEditor] = useState(false);
+
+    // Auto-load ontology when project changes
+    useEffect(() => {
+        if (initialOntology && Object.keys(initialOntology).length > 0) {
+            setOntology(initialOntology);
+            console.log('Loaded caption ontology from project:', initialOntology);
+        }
+    }, [initialOntology]);
 
     const handleRun = () => {
         if (Object.keys(ontology).length === 0) {
@@ -69,7 +79,7 @@ export const AnnotationSidebar: React.FC<AnnotationSidebarProps> = ({
                         >
                             <option value="sam2-base">SAM2 Base+</option>
                             <option value="sam2-large">SAM2 Large</option>
-                            <option value="none">None (Box Only)</option>
+                            <option value="none">None (Boxes Only)</option>
                         </select>
                     </div>
 

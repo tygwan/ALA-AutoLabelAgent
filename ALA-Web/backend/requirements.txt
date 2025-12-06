@@ -9,3 +9,9 @@ einops
 opencv-python
 Pillow
 numpy
+supervision
+autodistill
+autodistill-grounded-sam-2
+autodistill-florence-2
+autodistill-yolov8
+roboflow

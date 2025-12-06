@@ -122,3 +122,12 @@ ALA/material/test_category/test_image_?.jpg
 ALA/data/*
 !ALA/data/.gitkeep
 !ALA/data/README.md
+
+# Refactor Cleanups
+.venv/
+ala_backup_root/
+**/ala_backup/
+
+# External Dependencies and Checkpoints
+**/sam2/
+**/checkpoints/

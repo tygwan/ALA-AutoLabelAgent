@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout as LayoutIcon, Image as ImageIcon, Settings as SettingsIcon } from 'lucide-react';
+import { Layout as LayoutIcon, Image as ImageIcon, Settings as SettingsIcon, Beaker, Activity } from 'lucide-react';
 import clsx from 'clsx';
 
 interface LayoutProps {
@@ -12,6 +12,8 @@ export const Layout: React.FC<LayoutProps> = ({ children, activePage, onNavigate
     const navItems = [
         { id: 'annotate', label: 'Annotate', icon: ImageIcon },
         { id: 'preprocessing', label: 'Preprocessing', icon: LayoutIcon },
+        { id: 'classification', label: 'Classification', icon: Beaker },
+        { id: 'tracking', label: 'Data Flow', icon: Activity },
         { id: 'gallery', label: 'Gallery', icon: LayoutIcon },
         { id: 'settings', label: 'Settings', icon: SettingsIcon },
     ];

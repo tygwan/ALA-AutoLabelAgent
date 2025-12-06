@@ -1,0 +1,66 @@
+{
+    "img001": {
+        "filename": "test_001.jpg",
+        "stages": {
+            "uploaded": {
+                "timestamp": "2025-11-22T10:00:00Z",
+                "status": "complete",
+                "metadata": {}
+            },
+            "annotated": {
+                "timestamp": "2025-11-22T10:05:00Z",
+                "status": "complete",
+                "metadata": {}
+            },
+            "preprocessed": {
+                "timestamp": "2025-11-22T10:10:00Z",
+                "status": "complete",
+                "metadata": {}
+            }
+        },
+        "current_stage": "preprocessed",
+        "errors": []
+    },
+    "img002": {
+        "filename": "test_002.jpg",
+        "stages": {
+            "uploaded": {
+                "timestamp": "2025-11-22T10:00:00Z",
+                "status": "complete",
+                "metadata": {}
+            },
+            "annotated": {
+                "timestamp": "2025-11-22T10:05:00Z",
+                "status": "complete",
+                "metadata": {}
+            }
+        },
+        "current_stage": "annotated",
+        "errors": []
+    },
+    "img003": {
+        "filename": "test_003.jpg",
+        "stages": {
+            "uploaded": {
+                "timestamp": "2025-11-22T10:00:00Z",
+                "status": "complete",
+                "metadata": {}
+            },
+            "annotated": {
+                "timestamp": "2025-11-22T10:05:00Z",
+                "status": "error",
+                "metadata": {
+                    "error": "Model initialization failed"
+                }
+            }
+        },
+        "current_stage": "annotated",
+        "errors": [
+            {
+                "stage": "annotated",
+                "error": "Model initialization failed",
+                "timestamp": "2025-11-22T10:05:30Z"
+            }
+        ]
+    }
+}
