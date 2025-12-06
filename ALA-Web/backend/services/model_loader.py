@@ -50,7 +50,7 @@ class ModelLoader:
         if not AI_AVAILABLE:
             raise ImportError(
                 f"AI libraries not available: {_import_error}\n"
-                "Install with: pip install -r requirements_ai.txt"
+                "Install with: pip install -r requirements.txt"
             )
         
         # Reload if ontology changed

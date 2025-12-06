@@ -29,12 +29,22 @@ REM Install backend dependencies
 echo.
 echo [2/4] Installing backend dependencies...
 cd backend
+
+REM FIX: Create local temp directory to avoid "Path too long" errors (e.g., flash-attn)
+if not exist "tmp" mkdir tmp
+set TMP=%cd%\tmp
+set TEMP=%cd%\tmp
+echo Set temporary build directory to: %TMP%
+
 pip install -r requirements.txt
 if %ERRORLEVEL% NEQ 0 (
     echo ERROR: Failed to install backend dependencies.
+    echo Trying to clean up temp files...
+    rmdir /s /q tmp
     pause
     exit /b 1
 )
+rmdir /s /q tmp
 
 REM Install AI models (Optional)
 echo.

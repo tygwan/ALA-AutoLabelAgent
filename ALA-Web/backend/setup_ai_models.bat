@@ -23,7 +23,7 @@ call ..\.venv\Scripts\activate.bat
 
 echo.
 echo Installing AI dependencies...
-pip install -r requirements_ai.txt
+pip install -r requirements.txt
 
 if errorlevel 1 (
     echo ERROR: Failed to install AI dependencies
