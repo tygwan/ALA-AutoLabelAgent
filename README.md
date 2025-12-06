@@ -91,22 +91,21 @@ python src/main.py
 ### Option 2: Web Application (ALA-Web)
 
 ```bash
+# Clone repository
+git clone https://github.com/tygwan/ALA-AutoLabelAgent.git
 cd ALA-AutoLabelAgent/ALA-Web
 
-# Backend setup
-cd backend
-python -m venv venv
-venv\Scripts\activate  # Windows
-pip install -r requirements.txt
-uvicorn main:app --reload  # Runs on http://localhost:8000
+# Windows
+setup.bat   # Sets up .venv, installs dependencies, downloads models
+run.bat     # Launches Backend (8000) and Frontend (5173)
 
-# Frontend setup (new terminal)
-cd ../frontend
-npm install
-npm run dev  # Runs on http://localhost:5173
+# Linux/macOS
+./setup.sh  # Sets up .venv, installs dependencies, downloads models
+./run.sh    # Launches Backend (8000) and Frontend (5173)
 ```
 
-**First Time**: Open http://localhost:5173 → Drag images → Edit Caption Ontology → Run Annotation
+**First Time**: The application will automatically open http://localhost:5173
+**More Details**: See [ALA-Web/README.md](ALA-Web/README.md)
 
 ---
 

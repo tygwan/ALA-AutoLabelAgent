@@ -8,12 +8,12 @@
 
 ### Windows
 1. **Clone**: `git clone <repository-url>`
-2. **Install**: Double-click `setup.bat`
-3. **Run**: Double-click `run.bat`
+2. **Setup**: Double-click `setup.bat` (Install logic & dependencies)
+3. **Run**: Double-click `run.bat` (Starts Backend & Frontend)
 
 ### Linux/macOS
 1. **Clone**: `git clone <repository-url>`
-2. **Install**: `./setup.sh`
+2. **Setup**: `./setup.sh`
 3. **Run**: `./run.sh`
 
 > **Note**: The application will automatically open in your browser at http://localhost:5173
