@@ -6,6 +6,9 @@
 
 ## 🚀 Quick Start
 
+### 🆕 First Time User?
+**[👉 Click here for the Step-by-Step Beginner's Guide](GETTING_STARTED.md)**
+
 ### Windows
 1. **Clone**: `git clone <repository-url>`
 2. **Setup**: Double-click `setup.bat` (Install logic & dependencies)
