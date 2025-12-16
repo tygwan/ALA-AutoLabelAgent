@@ -9,6 +9,12 @@ Transform your image labeling workflow with AI-powered automation. ALA-AutoLabel
 [![React](https://img.shields.io/badge/React-18.2-blue.svg)](https://reactjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-Latest-green.svg)](https://fastapi.tiangolo.com/)
 
+<p align="center">
+  <img src="assets/dashboard.png" alt="ALA-Web Dashboard" width="100%">
+  <br>
+  <em>ALA-Web Dashboard: (A) Navigation (B) Auto-Annotation (C) Preprocessing (D) Classification (E) Data Flow Tracking</em>
+</p>
+
 ---
 
 ## 🎯 Choose Your Interface
